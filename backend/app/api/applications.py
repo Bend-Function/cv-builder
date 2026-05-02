@@ -164,7 +164,10 @@ def list_applications(request: Request) -> list[ApplicationRun]:
 def generate_application(application_id: str, request: Request) -> ApplicationRun:
     storage = get_storage(request)
     master_cv = storage.load_master_cv()
-    run = storage.load_application_run(application_id)
+    try:
+        run = storage.load_application_run(application_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="application not found") from exc
     updated = run_workflow(master_cv, run)
     storage.save_application_run(updated)
     return updated
