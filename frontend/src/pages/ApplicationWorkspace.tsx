@@ -5,7 +5,7 @@ export default function ApplicationWorkspace() {
     <Card>
       <Typography.Title level={2}>Application Workspace</Typography.Title>
       <Typography.Paragraph>
-        Match job descriptions to the master CV and prepare application materials.
+        Create assisted or auto JD-targeted application runs.
       </Typography.Paragraph>
     </Card>
   );

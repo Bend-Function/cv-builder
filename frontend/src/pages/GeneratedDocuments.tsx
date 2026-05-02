@@ -5,7 +5,7 @@ export default function GeneratedDocuments() {
     <Card>
       <Typography.Title level={2}>Generated Documents</Typography.Title>
       <Typography.Paragraph>
-        View and manage generated CV and cover letter documents.
+        Review ATS CV, portfolio CV, cover letter, and review results.
       </Typography.Paragraph>
     </Card>
   );

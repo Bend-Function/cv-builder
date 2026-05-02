@@ -4,7 +4,7 @@ export default function Dashboard() {
   return (
     <Card>
       <Typography.Paragraph>
-        Dashboard activity appears here so applicants can continue work on CV Builder applications.
+        Track master CV completeness and recent application runs.
       </Typography.Paragraph>
     </Card>
   );

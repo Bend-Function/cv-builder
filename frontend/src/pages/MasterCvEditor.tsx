@@ -5,7 +5,7 @@ export default function MasterCvEditor() {
     <Card>
       <Typography.Title level={2}>Master CV</Typography.Title>
       <Typography.Paragraph>
-        Maintain the complete source CV used for tailored applications.
+        Edit structured profile, skills, work, and project narrative data.
       </Typography.Paragraph>
     </Card>
   );
