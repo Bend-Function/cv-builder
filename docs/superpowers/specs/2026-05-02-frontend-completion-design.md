@@ -146,25 +146,78 @@ JD Input — Ant Design `Tabs` with four tabs:
 
 Empty state: "No application runs yet."
 
+## Backend: Documents Save Endpoint
+
+Add one new endpoint to `backend/app/api/applications.py`:
+
+```http
+PUT /api/applications/{application_id}/documents
+```
+
+Accepts an `ApplicationDocuments` payload. Merges the updated documents into the existing `ApplicationRun` and persists via `storage.save_application_run(run)`. Returns the full updated `ApplicationRun`.
+
+This endpoint is called by the frontend whenever the user saves edits made in the CV block editor.
+
+Add test coverage in `backend/tests/test_applications_api.py`:
+- `PUT` with valid `ApplicationDocuments` → 200 + documents persisted
+- `PUT` on unknown application_id → 404
+
 ## Frontend: Generated Documents
+
+The Generated Documents page is a full **CV management view** — the selected run's documents are displayed and edited block by block. All edits are local state until the user saves explicitly.
 
 ### Run selector
 
-`Select` dropdown populated from `GET /api/applications` on mount. If `selectedRunId` prop is set, it is pre-selected. On selection change, load `GET /api/applications/{id}`.
+`Select` dropdown populated from `GET /api/applications` on mount. If `selectedRunId` prop is set, it is pre-selected. On selection change, load `GET /api/applications/{id}` and populate local document state.
 
-### Tabs
+### Page layout
 
-**ATS CV tab**
-- Shows `contact_header` in a `Typography.Text` block
-- For each `DocumentSection` in `ats_cv.sections`: renders section heading and bullet list of `items`
+Single-page layout — no tabs wrapping the entire page. Instead:
 
-**Portfolio CV tab**
-- Same structure as ATS CV tab, using `portfolio_cv` data
+- Run selector at top
+- Below: four stacked named sections in a single scroll view:
+  1. ATS CV (block editor)
+  2. Portfolio CV (block editor)
+  3. Cover Letter (text editor)
+  4. Review (read-only)
 
-**Cover Letter tab**
-- `Typography.Paragraph` rendering `cover_letter` string (preserves newlines)
+Each named section has a section header with the title and a "Save Changes" button.
 
-**Review tab**
+### CV block editor (ATS CV and Portfolio CV)
+
+Each CV document is rendered as a list of editable blocks. A "block" is one `DocumentSection` (heading + bullet items).
+
+**Contact header block:**
+- Rendered as a single-line text input showing `contact_header`
+- Editable inline
+
+**Section blocks (one per `DocumentSection`):**
+
+Each block displays:
+- Section heading — editable `Input` (e.g. "TECHNICAL SKILLS", "WORK EXPERIENCE")
+- Bullet list — each `item` in `items` is an editable `Input.TextArea` (single row, auto-expand)
+- Per-bullet controls: delete icon on the right of each bullet
+- "Add bullet" link at the bottom of the bullet list
+- Block-level controls in the block header: drag handle (up/down arrows for reorder), delete block button
+
+**Adding and removing blocks:**
+- "Add Section" button at the bottom of the document adds a new blank block
+- Deleting a block with the block-level delete button removes it from local state (Popconfirm to confirm)
+
+**Reordering blocks:**
+- Up/down arrow buttons on each block header move the block one position. No drag-and-drop required.
+
+**Save Changes button (per document):**
+- Calls `PUT /api/applications/{id}/documents` with the full updated `ApplicationDocuments` (both ATS and Portfolio CV sent together, cover letter included)
+- Shows `message.success('CV saved')` on success
+- Disabled while save is in-flight
+
+### Cover Letter editor
+
+Ant Design `Input.TextArea` (auto-size, min 6 rows) showing the `cover_letter` string. Editable directly. "Save Changes" button saves via `PUT /api/applications/{id}/documents`.
+
+### Review section (read-only)
+
 - `passed` shown as green/red `Tag` ("Passed" / "Failed")
 - `overall_score` shown as Ant Design `Progress` bar (0–100)
 - Score breakdown: Ant Design `Descriptions` component listing each score key/value
@@ -173,13 +226,14 @@ Empty state: "No application runs yet."
 
 ### Export section
 
-Below the tabs:
+Fixed at the bottom of the page:
 - "Export PDFs" `Button` (primary) → calls `POST /api/applications/{id}/export`
 - After export: three download links (Ant Design `Button` type="link" with download icon):
   - "ATS CV PDF" → `/api/applications/{id}/exports/ats_cv.pdf`
   - "Portfolio CV PDF" → `/api/applications/{id}/exports/portfolio_cv.pdf`
   - "Cover Letter PDF" → `/api/applications/{id}/exports/cover_letter.pdf`
 - Links open via `window.open` in a new tab
+- Note: export uses the last saved state on the backend; unsaved edits are not included
 
 Empty state (no run selected): "Select an application run above to view generated documents."
 
@@ -347,6 +401,7 @@ createApplicationFromUrl(url: string, meta: ApplicationMeta): Promise<Applicatio
 listApplications(): Promise<ApplicationRun[]>
 getApplication(id: string): Promise<ApplicationRun>
 generateApplication(id: string): Promise<ApplicationRun>
+saveDocuments(id: string, documents: ApplicationDocuments): Promise<ApplicationRun>
 exportApplication(id: string): Promise<ApplicationRun>
 getExportUrl(id: string, filename: string): string  // returns URL string, no fetch
 ```
@@ -503,10 +558,17 @@ All frontend tests mock `fetch` / API modules. No real backend needed.
 **GeneratedDocuments.test.tsx**
 - Run selector dropdown renders all runs from mock list
 - Pre-selects `selectedRunId` when passed as prop
-- ATS CV tab renders `contact_header` and all `sections[].items` from mock data
-- Cover Letter tab renders `cover_letter` string
-- Review tab shows `passed` tag, `overall_score` bar, and `blocking_issues` list
-- Export button calls `exportApplication`; download links appear after export
+- ATS CV block editor renders `contact_header` input and one card per section with heading input and bullet inputs
+- Editing a bullet input updates local state; does not call API until Save is clicked
+- "Add bullet" link appends a new empty input to that section
+- Delete bullet icon removes that bullet from local state
+- Up arrow / down arrow buttons reorder blocks correctly in local state
+- "Add Section" button appends a new blank section block
+- Delete block button (with Popconfirm) removes the block
+- "Save Changes" calls `saveDocuments` with the full updated `ApplicationDocuments`
+- Cover Letter textarea is editable; "Save Changes" includes the updated `cover_letter` value
+- Review section shows `passed` tag, `overall_score` bar, and `blocking_issues` list (read-only, no inputs)
+- Export button calls `exportApplication`; download links appear after export completes
 - Empty state shown when no run is selected
 
 **Dashboard.test.tsx**
@@ -563,9 +625,15 @@ Open `http://127.0.0.1:5173`.
 
 **Generated Documents**
 - [ ] Run selector dropdown lists all runs
-- [ ] ATS CV tab shows contact header and sections
-- [ ] Cover Letter tab shows cover letter text
-- [ ] Review tab shows passed badge and overall score
+- [ ] ATS CV section renders contact header as editable input and each section as a block with heading + bullet inputs
+- [ ] Edit a bullet in ATS CV — value updates in the input; other inputs unchanged
+- [ ] Click "Add bullet" in a section — new empty input appears at bottom of that section
+- [ ] Delete a bullet — bullet removed from the block
+- [ ] Move a block down with the down arrow — block moves one position down
+- [ ] Click "Add Section" — new blank block appended
+- [ ] Click "Save Changes" for ATS CV — success toast shown; reload page and confirm edit persists
+- [ ] Cover Letter textarea is editable; Save Changes persists the update
+- [ ] Review section shows passed badge and overall score (no edit controls)
 - [ ] "Export PDFs" button exports and shows three download links
 - [ ] Clicking a download link opens/downloads a PDF in the browser
 
