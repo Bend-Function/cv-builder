@@ -384,44 +384,196 @@ type EditableSettings = Pick<Settings, 'ai_model' | 'default_mode' | 'gap_questi
 
 ## Testing
 
-### Backend tests (`test_settings_api.py`)
+Testing has three layers: backend unit/integration tests using `TestClient` (no real server needed), frontend unit tests with mocked API calls (Vitest + Testing Library), and a manual browser verification checklist run against the live backend.
 
-1. `GET /api/settings` with no `settings.json` → returns config defaults
-2. `PUT /api/settings` with valid payload → persists and returns updated values
-3. `GET /api/settings` after `PUT` → returns persisted values
-4. `PUT /api/settings` with extra read-only fields in payload → ignores them, no error
+### Backend tests (`test_settings_api.py`) — pytest + TestClient
 
-### Frontend tests (Vitest + Testing Library)
+Uses `TestClient(create_app(Settings(data_dir=tmp_path)))` for all tests. No real server started.
+
+1. `GET /api/settings` with no `settings.json` → returns config defaults for all fields
+2. `PUT /api/settings` with `{ai_model, default_mode, gap_questions_enabled, max_revision_loops}` → persists and returns updated values
+3. `GET /api/settings` after `PUT` → confirms values round-trip from disk
+4. `PUT /api/settings` with extra read-only fields (`ai_provider`, `data_dir`) in payload → ignores them silently, no error
+5. `PUT /api/settings` with `max_revision_loops` out of range (e.g. 99) → returns 422
+
+### Backend E2E smoke test extension (`test_e2e_smoke.py`)
+
+Extend the existing `test_local_application_smoke_path` test to also cover:
+
+```python
+def test_settings_round_trip_in_app_context(tmp_path):
+    app = create_app(Settings(data_dir=tmp_path))
+    client = TestClient(app)
+
+    # Default settings returned when no file exists
+    defaults = client.get("/api/settings").json()
+    assert defaults["ai_model"] == "gpt-5.4"
+    assert defaults["gap_questions_enabled"] is True
+
+    # Update and confirm persistence
+    client.put("/api/settings", json={
+        "ai_model": "gpt-5.4",
+        "default_mode": "auto",
+        "gap_questions_enabled": False,
+        "max_revision_loops": 1,
+    })
+    updated = client.get("/api/settings").json()
+    assert updated["default_mode"] == "auto"
+    assert updated["gap_questions_enabled"] is False
+```
+
+Also add a test that exercises the full Application Workspace API flow in sequence:
+
+```python
+def test_full_application_workflow(tmp_path):
+    app = create_app(Settings(data_dir=tmp_path))
+    client = TestClient(app)
+
+    # 1. Set up master CV
+    cv = client.get("/api/master-cv").json()
+    cv["profile"]["full_name"] = "Alex Chen"
+    cv["profile"]["email"] = "alex@example.com"
+    cv["work_experience"] = [{
+        "id": "work_001",
+        "company": "Acme Corp",
+        "title": "Intern",
+        "start_date": "January 2025",
+        "end_date": "June 2025",
+        "responsibilities": ["Built internal tools"],
+    }]
+    cv["projects"] = [{
+        "id": "proj_001",
+        "name": "RAG Assistant",
+        "tier": "A",
+        "technologies": ["Python", "FastAPI"],
+        "narrative": "Retrieval assistant.",
+    }]
+    cv["education"] = [{
+        "institution": "Uni NZ",
+        "qualification": "BCS",
+        "start_date": "March 2022",
+        "end_date": "November 2024",
+    }]
+    assert client.put("/api/master-cv", json=cv).status_code == 200
+
+    # 2. Create application run
+    run = client.post("/api/applications", json={
+        "company": "TechCo",
+        "role_title": "Junior AI Developer",
+        "mode": "assisted",
+        "jd_text": "Python, FastAPI, RAG experience required.",
+    }).json()
+    assert "application_id" in run
+
+    # 3. List applications — run appears
+    runs = client.get("/api/applications").json()
+    assert any(r["application_id"] == run["application_id"] for r in runs)
+
+    # 4. Generate
+    generated = client.post(f"/api/applications/{run['application_id']}/generate").json()
+    assert generated["generated_documents"]["ats_cv"]["title"] == "ATS CV"
+    assert generated["review_result"]["passed"] is True
+
+    # 5. Export PDFs
+    exported = client.post(f"/api/applications/{run['application_id']}/export").json()
+    assert "ats_cv" in exported["exports"]
+    assert "portfolio_cv" in exported["exports"]
+    assert "cover_letter" in exported["exports"]
+
+    # 6. Download each PDF
+    for filename in ["ats_cv.pdf", "portfolio_cv.pdf", "cover_letter.pdf"]:
+        resp = client.get(f"/api/applications/{run['application_id']}/exports/{filename}")
+        assert resp.status_code == 200
+        assert resp.headers["content-type"] == "application/pdf"
+```
+
+### Frontend unit tests (Vitest + Testing Library)
+
+All frontend tests mock `fetch` / API modules. No real backend needed.
 
 **ApplicationWorkspace.test.tsx**
-- Renders create form with all fields and tabs
-- "Create & Generate" calls create endpoint then generate endpoint in sequence
-- `navigate` is called with `('documents', applicationId)` on success
-- Error message shown when create endpoint fails
+- Renders create form with Company, Role Title, Location, Mode, and all four JD input tabs
+- Text tab: "Create & Generate" calls `createApplication` then `generateApplication` in sequence
+- File tab: file picker triggers `createApplicationFromFile`
+- Fixture JSON tab: label reads "SEEK Fixture JSON"; file picker triggers `createApplicationFromFixture`
+- `navigate('documents', id)` is called with the new run's id on success
+- Error shown and form left intact when create endpoint fails
+- Error shown when generate step fails after successful create
 
 **GeneratedDocuments.test.tsx**
-- Renders run selector dropdown from mock list
+- Run selector dropdown renders all runs from mock list
 - Pre-selects `selectedRunId` when passed as prop
-- Renders ATS CV sections from mock `ApplicationRun`
-- Export button calls export endpoint
-- Download links shown after export completes
+- ATS CV tab renders `contact_header` and all `sections[].items` from mock data
+- Cover Letter tab renders `cover_letter` string
+- Review tab shows `passed` tag, `overall_score` bar, and `blocking_issues` list
+- Export button calls `exportApplication`; download links appear after export
+- Empty state shown when no run is selected
 
 **Dashboard.test.tsx**
-- Completeness progress bar shows correct fraction from mock master CV
-- Recent runs list renders company and role title
+- Progress bar shows correct fraction from mock master CV (e.g. "5 / 7 sections complete")
+- Completeness check correctly counts non-empty sections
+- Recent runs list renders company and role title from mock runs
+- "View" link calls `navigate('documents', id)`
 - "New Application" button calls `navigate('workspace')`
 
-**MasterCvEditor.test.tsx** (extend existing)
-- Profile & Summary tab renders all 13 profile fields
-- Work Experience tab: "Add Work Experience" appends a new card
-- Projects tab: "Add Project" appends a new card
-- Save button is disabled before data loads and re-enabled after
-- Saving calls `PUT /api/master-cv` with full merged payload including new sections
+**MasterCvEditor.test.tsx** (extend existing tests)
+- Profile & Summary tab renders all 13 profile fields plus `summary_source` textarea
+- Skills tab renders tag inputs for all seven skill categories
+- Work Experience tab: "Add Work Experience" appends a new card; card shows title and company in header
+- Projects tab: "Add Project" appends a new card; tier select shows A/B/C options
+- Education tab: "Add Education" appends a new entry
+- Save button disabled before data loads, enabled after; save calls `PUT /api/master-cv` with full merged payload including `work_experience`, `projects`, `education`, `skills`, `certifications`
 
 **Settings.test.tsx**
-- Form loads values from `GET /api/settings`
-- Save calls `PUT /api/settings` with editable fields only
-- Read-only fields are displayed but not in the form submit payload
+- Form loads all four editable fields from mock `GET /api/settings` response
+- Read-only fields (`ai_provider`, `data_dir`, `openai_api_key_env`) are displayed as text
+- Save button calls `PUT /api/settings` with only the four editable fields
+- `message.success` shown on successful save
+- `message.error` shown when save fails
+
+### Manual browser verification checklist
+
+Run after all automated tests pass. Requires both servers running:
+```
+cd backend && uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+cd frontend && npm run dev
+```
+Open `http://127.0.0.1:5173`.
+
+**Dashboard**
+- [ ] Progress bar shows correct completeness count
+- [ ] Recent runs list appears (or empty state if no runs)
+- [ ] "New Application" navigates to Application Workspace
+
+**Master CV Editor**
+- [ ] All tabs render without errors
+- [ ] Add a Work Experience entry, fill in company and title, confirm header shows `title @ company`
+- [ ] Add a Project entry, set tier to A, confirm header shows `[A]`
+- [ ] Add an Education entry
+- [ ] Preview pane updates live as fields are typed
+- [ ] Save Master CV succeeds and shows "Master CV saved"
+- [ ] Reload page — saved work experience and projects are present
+
+**Application Workspace**
+- [ ] All four JD input tabs render
+- [ ] Text tab: paste JD text, click "Create & Generate", observe "Creating…" then "Generating…" spinner, then navigate to Generated Documents with run pre-selected
+- [ ] Fixture JSON tab: upload a file from `ref/jobs/`, confirm company and role auto-populate from SEEK JSON, generate successfully
+- [ ] Recent runs panel shows new run with "Generated" tag
+- [ ] Clicking "View" in recent runs navigates to Generated Documents for that run
+
+**Generated Documents**
+- [ ] Run selector dropdown lists all runs
+- [ ] ATS CV tab shows contact header and sections
+- [ ] Cover Letter tab shows cover letter text
+- [ ] Review tab shows passed badge and overall score
+- [ ] "Export PDFs" button exports and shows three download links
+- [ ] Clicking a download link opens/downloads a PDF in the browser
+
+**Settings**
+- [ ] All four editable fields load from backend
+- [ ] Read-only fields displayed correctly
+- [ ] Change Default Mode to Auto, save, reload — Auto persists
+- [ ] Change Gap Questions toggle, save, reload — value persists
 
 ## Error Handling
 
