@@ -16,6 +16,7 @@ backend/data/
 venv
 .agents
 .claude
+.superpowers/
 ref
 .vscode/
 .idea/
