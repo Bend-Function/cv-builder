@@ -16,6 +16,7 @@ from app.services.pdf_renderer import PdfRenderer
 from app.services.storage import JsonStorage
 
 router = APIRouter(prefix="/api/applications", tags=["applications"])
+KNOWN_EXPORT_FILENAMES = {"ats_cv.pdf", "portfolio_cv.pdf", "cover_letter.pdf"}
 
 
 def _url_http_client_factory() -> httpx.Client:
@@ -45,6 +46,33 @@ def get_storage(request: Request) -> JsonStorage:
 def _new_application_id() -> str:
     timestamp = datetime.now(UTC).strftime("%Y%m%d%H%M%S%f")
     return f"app_{timestamp}"
+
+
+def _load_application_or_404(storage: JsonStorage, application_id: str) -> ApplicationRun:
+    try:
+        return storage.load_application_run(application_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="application not found") from exc
+
+
+def _normalise_exports(export_paths: dict[str, str]) -> dict[str, str]:
+    return {key: Path(path).name for key, path in export_paths.items()}
+
+
+def _export_filename_allowed(run: ApplicationRun, filename: str) -> bool:
+    return filename in KNOWN_EXPORT_FILENAMES or filename in set(run.exports.values())
+
+
+def _resolve_export_path(storage: JsonStorage, application_id: str, filename: str) -> Path:
+    exports_dir = (storage.application_dir(application_id) / "exports").resolve()
+    export_path = (exports_dir / filename).resolve()
+    if export_path.parent != exports_dir:
+        raise HTTPException(status_code=404, detail="export not found")
+    return export_path
+
+
+def _raise_export_not_found() -> None:
+    raise HTTPException(status_code=404, detail="export not found")
 
 
 @router.post("")
@@ -178,17 +206,25 @@ def generate_application(application_id: str, request: Request) -> ApplicationRu
 @router.post("/{application_id}/export")
 def export_application(application_id: str, request: Request) -> ApplicationRun:
     storage = get_storage(request)
-    run = storage.load_application_run(application_id)
+    run = _load_application_or_404(storage, application_id)
     documents = ApplicationDocuments.model_validate(run.generated_documents)
     output_dir = storage.application_dir(application_id) / "exports"
-    run.exports = PdfRenderer().export_documents(documents, output_dir)
+    export_paths = PdfRenderer().export_documents(documents, output_dir)
+    run.exports = _normalise_exports(export_paths)
     storage.save_application_run(run)
     return run
 
 
-@router.get("/{application_id}/exports/{filename}")
+@router.get("/{application_id}/exports/{filename:path}")
 def get_export(application_id: str, filename: str, request: Request) -> FileResponse:
-    export_path = get_storage(request).application_dir(application_id) / "exports" / filename
+    storage = get_storage(request)
+    run = _load_application_or_404(storage, application_id)
+    if not _export_filename_allowed(run, filename):
+        _raise_export_not_found()
+
+    export_path = _resolve_export_path(storage, application_id, filename)
+    if not export_path.is_file():
+        _raise_export_not_found()
     return FileResponse(export_path, media_type="application/pdf", filename=filename)
 
 

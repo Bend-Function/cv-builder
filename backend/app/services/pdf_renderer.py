@@ -16,10 +16,12 @@ class PlaywrightPdfEngine:
 
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
-            page = browser.new_page()
-            page.set_content(html, wait_until="networkidle")
-            page.pdf(path=str(output_path), print_background=True, format="A4")
-            browser.close()
+            try:
+                page = browser.new_page()
+                page.set_content(html, wait_until="networkidle")
+                page.pdf(path=str(output_path), print_background=True, format="A4")
+            finally:
+                browser.close()
 
 
 class TemplateLoader(BaseLoader):
