@@ -13,5 +13,9 @@ dist/
 build/
 coverage/
 backend/data/
+venv
+.agents
+.claude
+ref
 .vscode/
 .idea/
