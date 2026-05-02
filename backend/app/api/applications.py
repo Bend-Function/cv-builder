@@ -8,6 +8,7 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from app.ai.graph import run_workflow
 from app.models.application import ApplicationRun
 from app.services.jd_ingestion import JdIngestionService
 from app.services.storage import JsonStorage
@@ -157,6 +158,16 @@ def create_application_from_url(payload: CreateApplicationFromUrlRequest, reques
 @router.get("")
 def list_applications(request: Request) -> list[ApplicationRun]:
     return get_storage(request).list_application_runs()
+
+
+@router.post("/{application_id}/generate")
+def generate_application(application_id: str, request: Request) -> ApplicationRun:
+    storage = get_storage(request)
+    master_cv = storage.load_master_cv()
+    run = storage.load_application_run(application_id)
+    updated = run_workflow(master_cv, run)
+    storage.save_application_run(updated)
+    return updated
 
 
 @router.get("/{application_id}")
