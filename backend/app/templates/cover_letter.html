@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Cover Letter</title>
+    <style>
+        {% include "../static/cover_letter.css" %}
+    </style>
+</head>
+<body>
+    <main class="cover-letter">
+        {% for paragraph in document.split('\n\n') %}
+        {% if paragraph.strip() %}
+        <p>{{ paragraph }}</p>
+        {% endif %}
+        {% endfor %}
+    </main>
+</body>
+</html>

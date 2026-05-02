@@ -10,7 +10,9 @@ from pydantic import BaseModel
 
 from app.ai.graph import run_workflow
 from app.models.application import ApplicationRun
+from app.models.documents import ApplicationDocuments
 from app.services.jd_ingestion import JdIngestionService
+from app.services.pdf_renderer import PdfRenderer
 from app.services.storage import JsonStorage
 
 router = APIRouter(prefix="/api/applications", tags=["applications"])
@@ -171,6 +173,23 @@ def generate_application(application_id: str, request: Request) -> ApplicationRu
     updated = run_workflow(master_cv, run)
     storage.save_application_run(updated)
     return updated
+
+
+@router.post("/{application_id}/export")
+def export_application(application_id: str, request: Request) -> ApplicationRun:
+    storage = get_storage(request)
+    run = storage.load_application_run(application_id)
+    documents = ApplicationDocuments.model_validate(run.generated_documents)
+    output_dir = storage.application_dir(application_id) / "exports"
+    run.exports = PdfRenderer().export_documents(documents, output_dir)
+    storage.save_application_run(run)
+    return run
+
+
+@router.get("/{application_id}/exports/{filename}")
+def get_export(application_id: str, filename: str, request: Request) -> FileResponse:
+    export_path = get_storage(request).application_dir(application_id) / "exports" / filename
+    return FileResponse(export_path, media_type="application/pdf", filename=filename)
 
 
 @router.get("/{application_id}")
