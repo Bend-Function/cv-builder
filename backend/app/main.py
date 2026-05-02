@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api import applications, master_cv
+from app.api import applications, master_cv, settings as settings_api
 from app.config import Settings, get_settings
 from app.services.storage import JsonStorage
 
@@ -12,6 +12,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.storage = JsonStorage(resolved_settings.data_dir)
     app.include_router(master_cv.router)
     app.include_router(applications.router)
+    app.include_router(settings_api.router)
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
