@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from pathlib import Path
 from typing import TypeVar
 
@@ -8,6 +9,13 @@ from pydantic import BaseModel
 from app.models.master_cv import MasterCv
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
+APPLICATION_ID_PATTERN = re.compile(r"^app_[A-Za-z0-9_-]+$")
+
+
+def validate_application_id(application_id: str) -> str:
+    if not APPLICATION_ID_PATTERN.fullmatch(application_id):
+        raise ValueError("invalid application id")
+    return application_id
 
 
 class JsonStorage:
@@ -34,7 +42,7 @@ class JsonStorage:
         return self.data_dir / "applications"
 
     def application_dir(self, application_id: str) -> Path:
-        return self.applications_dir / application_id
+        return self.applications_dir / validate_application_id(application_id)
 
     def save_application_run(self, run: "ApplicationRun") -> None:
         from app.models.application import ApplicationRun

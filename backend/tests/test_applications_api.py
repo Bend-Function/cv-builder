@@ -141,6 +141,47 @@ def test_create_application_from_url(tmp_path: Path, monkeypatch):
     assert "Cloud Engineer" in payload["jd_input"]["extracted_text"]
 
 
+def test_get_application_maps_invalid_application_id_to_404(tmp_path: Path):
+    app = create_app(Settings(data_dir=tmp_path))
+    client = TestClient(app)
+
+    response = client.get("/api/applications/app_..")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "application not found"}
+
+
+def test_export_returns_400_when_documents_have_not_been_generated(tmp_path: Path):
+    app = create_app(Settings(data_dir=tmp_path))
+    client = TestClient(app)
+    created = client.post(
+        "/api/applications",
+        json={"company": "ExportCo", "role_title": "Engineer", "jd_text": "Python"},
+    ).json()
+
+    response = client.post(f"/api/applications/{created['application_id']}/export")
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "generated documents are required before export"}
+
+
+def test_export_returns_400_when_generated_documents_are_incomplete(tmp_path: Path):
+    app = create_app(Settings(data_dir=tmp_path))
+    client = TestClient(app)
+    created = client.post(
+        "/api/applications",
+        json={"company": "ExportCo", "role_title": "Engineer", "jd_text": "Python"},
+    ).json()
+    run = client.app.state.storage.load_application_run(created["application_id"])
+    run.generated_documents = {"ats_cv": {"title": "ATS CV"}}
+    client.app.state.storage.save_application_run(run)
+
+    response = client.post(f"/api/applications/{created['application_id']}/export")
+
+    assert response.status_code == 400
+    assert response.json() == {"detail": "generated documents are incomplete"}
+
+
 class FakePdfRenderer:
     def export_documents(self, documents: ApplicationDocuments, output_dir: Path) -> dict[str, str]:
         output_dir.mkdir(parents=True, exist_ok=True)

@@ -51,12 +51,21 @@ def _new_application_id() -> str:
 def _load_application_or_404(storage: JsonStorage, application_id: str) -> ApplicationRun:
     try:
         return storage.load_application_run(application_id)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, ValueError) as exc:
         raise HTTPException(status_code=404, detail="application not found") from exc
 
 
 def _normalise_exports(export_paths: dict[str, str]) -> dict[str, str]:
     return {key: Path(path).name for key, path in export_paths.items()}
+
+
+def _validate_generated_documents_for_export(generated_documents: dict) -> ApplicationDocuments:
+    if not generated_documents:
+        raise HTTPException(status_code=400, detail="generated documents are required before export")
+    required_keys = {"ats_cv", "portfolio_cv", "cover_letter"}
+    if not required_keys.issubset(generated_documents):
+        raise HTTPException(status_code=400, detail="generated documents are incomplete")
+    return ApplicationDocuments.model_validate(generated_documents)
 
 
 def _export_filename_allowed(run: ApplicationRun, filename: str) -> bool:
@@ -196,7 +205,7 @@ def generate_application(application_id: str, request: Request) -> ApplicationRu
     master_cv = storage.load_master_cv()
     try:
         run = storage.load_application_run(application_id)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, ValueError) as exc:
         raise HTTPException(status_code=404, detail="application not found") from exc
     updated = run_workflow(master_cv, run)
     storage.save_application_run(updated)
@@ -207,7 +216,7 @@ def generate_application(application_id: str, request: Request) -> ApplicationRu
 def export_application(application_id: str, request: Request) -> ApplicationRun:
     storage = get_storage(request)
     run = _load_application_or_404(storage, application_id)
-    documents = ApplicationDocuments.model_validate(run.generated_documents)
+    documents = _validate_generated_documents_for_export(run.generated_documents)
     output_dir = storage.application_dir(application_id) / "exports"
     export_paths = PdfRenderer().export_documents(documents, output_dir)
     run.exports = _normalise_exports(export_paths)
@@ -232,5 +241,5 @@ def get_export(application_id: str, filename: str, request: Request) -> FileResp
 def get_application(application_id: str, request: Request) -> ApplicationRun:
     try:
         return get_storage(request).load_application_run(application_id)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, ValueError) as exc:
         raise HTTPException(status_code=404, detail="application not found") from exc

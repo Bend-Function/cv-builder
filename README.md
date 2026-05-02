@@ -26,6 +26,10 @@ npm run dev
 
 The MVP default model is OpenAI `gpt-5.4`. API keys must be provided through environment variables or local-only config. Do not commit or print secret values from `ref/ai.txt`.
 
+## Security note
+
+This MVP is intended for trusted, single-user localhost use only. URL ingestion fetches user-provided URLs and should not be exposed on a network or multi-user deployment without SSRF protections for local and internal services.
+
 ## MVP Flow
 
 1. Edit the master CV manually.

@@ -30,3 +30,25 @@ def test_list_application_runs(tmp_path: Path):
     runs = storage.list_application_runs()
 
     assert [run.application_id for run in runs] == ["app_001", "app_002"]
+
+
+def test_application_id_rejects_path_traversal_segments(tmp_path: Path):
+    storage = JsonStorage(tmp_path)
+
+    try:
+        storage.load_application_run("app_../secret")
+    except ValueError as exc:
+        assert "invalid application id" in str(exc)
+    else:
+        raise AssertionError("expected invalid application id to be rejected")
+
+
+def test_application_id_rejects_dots_and_missing_prefix(tmp_path: Path):
+    storage = JsonStorage(tmp_path)
+
+    for application_id in ["", "app_001.json", "001", "app_.."]:
+        try:
+            storage.application_dir(application_id)
+        except ValueError:
+            continue
+        raise AssertionError(f"expected {application_id!r} to be rejected")
