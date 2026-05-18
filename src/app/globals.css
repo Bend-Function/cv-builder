@@ -128,3 +128,77 @@
     @apply font-sans;
   }
 }
+
+body {
+  background: #080a0f;
+  color: #e8e4dc;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #3a4052; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #6a7080; }
+
+.paper-name {
+  font-family: var(--font-fraunces), serif;
+  font-size: 22pt;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4pt;
+  letter-spacing: -0.3pt;
+}
+
+.paper-contact {
+  font-size: 9.5pt;
+  color: #555;
+  margin-bottom: 14pt;
+  text-align: center;
+}
+
+.paper-section {
+  margin-bottom: 12pt;
+}
+
+.paper-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2pt;
+}
+
+.paper-item-title {
+  font-weight: 700;
+  font-size: 10.5pt;
+}
+
+.paper-item-subtitle {
+  color: #555;
+  font-size: 9.5pt;
+}
+
+.paper-item-date {
+  font-size: 9pt;
+  color: #555;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.paper-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 2pt 0 6pt 0;
+}
+
+.paper-bullets li {
+  position: relative;
+  padding-left: 10pt;
+  margin-bottom: 1.5pt;
+  font-size: 9.5pt;
+}
+
+.paper-bullets li::before {
+  content: '\2022';
+  position: absolute;
+  left: 0;
+  color: #555;
+}

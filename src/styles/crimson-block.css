@@ -1,0 +1,12 @@
+.theme-crimson-block .paper-section-title {
+  background: #8b2635;
+  color: #fff;
+  padding: 2pt 6pt;
+  display: inline-block;
+  font-family: var(--font-fraunces), serif;
+  font-size: 11pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6pt;
+}

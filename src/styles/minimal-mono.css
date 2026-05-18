@@ -1,0 +1,19 @@
+.theme-minimal-mono .paper,
+.theme-minimal-mono .paper-name,
+.theme-minimal-mono .paper-section-title {
+  font-family: 'Times New Roman', serif !important;
+}
+
+.theme-minimal-mono .paper-name {
+  font-weight: 700 !important;
+}
+
+.theme-minimal-mono .paper-section-title {
+  font-size: 10.5pt !important;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  border-bottom: 0.5pt solid #1a1a1a;
+  padding-bottom: 2pt;
+  margin-bottom: 6pt;
+}

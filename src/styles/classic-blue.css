@@ -1,0 +1,11 @@
+.theme-classic-blue .paper-section-title {
+  color: #1e4d8b;
+  border-bottom: 1.5pt solid #1e4d8b;
+  padding-bottom: 2pt;
+  font-family: var(--font-fraunces), serif;
+  font-size: 11pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 6pt;
+}
