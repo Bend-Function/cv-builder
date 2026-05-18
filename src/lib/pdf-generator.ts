@@ -40,7 +40,7 @@ async function buildHTML(data: ResumeData): Promise<string> {
 
 export async function generatePDF(data: ResumeData): Promise<Buffer> {
   const chromium = (await import('puppeteer-core')).default
-  const executablePath = await import('@sparticuz/chromium-min').then((m) => m.default.executablePath())
+  const executablePath = await import('@sparticuz/chromium').then((m) => m.default.executablePath())
 
   const browser = await chromium.launch({
     executablePath,
