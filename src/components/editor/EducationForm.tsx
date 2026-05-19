@@ -24,32 +24,47 @@ export function EducationForm({ education, onChange }: EducationFormProps) {
   return (
     <div>
       {education.map((edu, i) => (
-        <div key={edu.id} className="bg-workspace border border-border-subtle rounded-md p-4 mb-3">
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-serif text-[11px] font-semibold text-accent tracking-wide">#{i + 1}</span>
-            <button onClick={() => remove(i)} className="text-text-muted hover:text-red-400 p-1 rounded transition-colors text-lg">×</button>
+        <div key={edu.id} className="item-card">
+          <div className="item-header">
+            <span className="item-number">#{i + 1}</span>
+            <button onClick={() => remove(i)} className="item-delete">×</button>
           </div>
-          <div className="mb-2"><label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">Degree</label><input type="text" value={edu.degree} onChange={(e) => update(i, 'degree', e.target.value)} className="w-full px-3 py-2 bg-workspace border border-border-subtle rounded-md text-text-primary text-sm outline-none focus:border-accent-dim" /></div>
-          <div className="mb-2"><label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">Institution</label><input type="text" value={edu.institution} onChange={(e) => update(i, 'institution', e.target.value)} className="w-full px-3 py-2 bg-workspace border border-border-subtle rounded-md text-text-primary text-sm outline-none focus:border-accent-dim" /></div>
-          <div className="mb-2"><label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">Location</label><input type="text" value={edu.location} onChange={(e) => update(i, 'location', e.target.value)} className="w-full px-3 py-2 bg-workspace border border-border-subtle rounded-md text-text-primary text-sm outline-none focus:border-accent-dim" /></div>
-          <div className="grid grid-cols-2 gap-2 mb-2">
-            <div><label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">Start Date</label><input type="text" value={edu.startDate} onChange={(e) => update(i, 'startDate', e.target.value)} className="w-full px-3 py-2 bg-workspace border border-border-subtle rounded-md text-text-primary text-sm outline-none focus:border-accent-dim" /></div>
-            <div><label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">End Date</label><input type="text" value={edu.endDate} onChange={(e) => update(i, 'endDate', e.target.value)} className="w-full px-3 py-2 bg-workspace border border-border-subtle rounded-md text-text-primary text-sm outline-none focus:border-accent-dim" /></div>
+          <div className="form-group">
+            <label className="form-label">Degree</label>
+            <input type="text" value={edu.degree} onChange={(e) => update(i, 'degree', e.target.value)} className="form-input" />
           </div>
-          <div>
-            <label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">Details</label>
+          <div className="form-group">
+            <label className="form-label">Institution</label>
+            <input type="text" value={edu.institution} onChange={(e) => update(i, 'institution', e.target.value)} className="form-input" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Location</label>
+            <input type="text" value={edu.location} onChange={(e) => update(i, 'location', e.target.value)} className="form-input" />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Start Date</label>
+              <input type="text" value={edu.startDate} onChange={(e) => update(i, 'startDate', e.target.value)} className="form-input" />
+            </div>
+            <div className="form-group">
+              <label className="form-label">End Date</label>
+              <input type="text" value={edu.endDate} onChange={(e) => update(i, 'endDate', e.target.value)} className="form-input" />
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Details</label>
             {edu.details.map((d, j) => (
-              <div key={j} className="flex items-start gap-1 mb-1">
-                <span className="text-accent mt-1.5 text-sm shrink-0">›</span>
-                <input type="text" value={d} onChange={(e) => setDetail(i, j, e.target.value)} className="flex-1 bg-transparent border-b border-border-subtle text-text-primary text-sm py-1 outline-none focus:border-accent-dim placeholder-text-muted placeholder-italic" />
-                <button onClick={() => removeDetail(i, j)} className="text-text-muted hover:text-red-400 p-1 rounded transition-colors">×</button>
+              <div key={j} className="bullet-row">
+                <span className="bullet-dot">›</span>
+                <input type="text" value={d} onChange={(e) => setDetail(i, j, e.target.value)} className="bullet-input" />
+                <button onClick={() => removeDetail(i, j)} className="item-delete">×</button>
               </div>
             ))}
-            <button onClick={() => addDetail(i)} className="inline-flex items-center gap-1 text-accent text-xs font-semibold border border-border-subtle rounded-full px-3 py-1 mt-1 hover:bg-accent/10 transition-colors">+ Add detail</button>
+            <button onClick={() => addDetail(i)} className="add-btn">+ Add detail</button>
           </div>
         </div>
       ))}
-      <button onClick={add} className="inline-flex items-center gap-1 text-accent text-xs font-semibold border border-border-subtle rounded-full px-3 py-1 hover:bg-accent/10 transition-colors">+ Add Education</button>
+      <button onClick={add} className="add-btn">+ Add Education</button>
     </div>
   )
 }

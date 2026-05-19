@@ -39,7 +39,7 @@ function SortableItem({ id, children }: { id: string; children: ReactNode }) {
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing p-1 mr-1 text-text-muted hover:text-text-secondary"
+          className="drag-handle"
         >
           <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
             <circle cx="2" cy="2" r="1.5" />
@@ -50,7 +50,7 @@ function SortableItem({ id, children }: { id: string; children: ReactNode }) {
             <circle cx="10" cy="10" r="1.5" />
           </svg>
         </div>
-        {children}
+        <div className="flex-1">{children}</div>
       </div>
     </div>
   )

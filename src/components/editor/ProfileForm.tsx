@@ -32,31 +32,23 @@ export function ProfileForm({ profile, onChange }: ProfileFormProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <span className="text-[11px] font-semibold text-text-secondary uppercase tracking-wide">
-          Format
-        </span>
-        <div className="flex rounded-md overflow-hidden border border-border-subtle">
+    <div>
+      <div className="form-group">
+        <label className="form-label">Format</label>
+        <div className="form-row">
           <button
             type="button"
             onClick={() => setType('paragraph')}
-            className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-              profile.type === 'paragraph'
-                ? 'bg-accent text-workspace'
-                : 'bg-transparent text-text-secondary hover:text-text-primary'
-            }`}
+            className={`btn ${profile.type === 'paragraph' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ flex: 1 }}
           >
             Paragraph
           </button>
           <button
             type="button"
             onClick={() => setType('bulletPoints')}
-            className={`px-3 py-1.5 text-xs font-medium transition-colors border-l border-border-subtle ${
-              profile.type === 'bulletPoints'
-                ? 'bg-accent text-workspace'
-                : 'bg-transparent text-text-secondary hover:text-text-primary'
-            }`}
+            className={`btn ${profile.type === 'bulletPoints' ? 'btn-primary' : 'btn-secondary'}`}
+            style={{ flex: 1 }}
           >
             Bullet Points
           </button>
@@ -64,47 +56,39 @@ export function ProfileForm({ profile, onChange }: ProfileFormProps) {
       </div>
 
       {profile.type === 'paragraph' ? (
-        <div>
-          <label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">
-            Profile Summary
-          </label>
+        <div className="form-group">
+          <label className="form-label">Profile Summary</label>
           <textarea
             value={profile.content}
             onChange={(e) => setContent(e.target.value)}
             rows={4}
-            className="w-full px-3 py-2 bg-workspace border border-border-subtle rounded-md text-text-primary text-sm outline-none focus:border-accent-dim focus:ring-2 focus:ring-accent/15 placeholder-text-muted resize-y min-h-[60px]"
+            className="form-textarea"
             placeholder="Write a concise 35-80 word summary of your skills, experience and career goals."
           />
         </div>
       ) : (
-        <div>
-          <label className="block text-[11px] font-semibold text-text-secondary uppercase tracking-wide mb-1">
-            Profile Points
-          </label>
+        <div className="form-group">
+          <label className="form-label">Profile Points</label>
           {profile.bullets.map((bullet, i) => (
-            <div key={i} className="flex items-start gap-1 mb-1">
-              <span className="text-accent mt-1.5 text-sm shrink-0">›</span>
+            <div key={i} className="bullet-row">
+              <span className="bullet-dot">›</span>
               <input
                 type="text"
                 value={bullet}
                 onChange={(e) => setBullet(i, e.target.value)}
-                className="flex-1 bg-transparent border-b border-border-subtle text-text-primary text-sm py-1 outline-none focus:border-accent-dim placeholder-text-muted placeholder-italic"
+                className="bullet-input"
                 placeholder="Key point about your background"
               />
               <button
                 type="button"
                 onClick={() => removeBullet(i)}
-                className="text-text-muted hover:text-red-400 p-1 rounded transition-colors"
+                className="item-delete"
               >
                 ×
               </button>
             </div>
           ))}
-          <button
-            type="button"
-            onClick={addBullet}
-            className="inline-flex items-center gap-1 text-accent text-xs font-semibold border border-border-subtle rounded-full px-3 py-1 mt-1 hover:bg-accent/10 transition-colors"
-          >
+          <button type="button" onClick={addBullet} className="add-btn">
             + Add point
           </button>
         </div>

@@ -4,10 +4,8 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { ResumeData, defaultResumeData, Section } from '@/lib/resume-data'
 import { loadResumeData, createDebouncedSaver } from '@/lib/storage'
 import { exportResumeJSON, importResumeJSON } from '@/lib/validate'
-import { EditorPanel } from '@/components/editor/EditorPanel'
 import { ResumePreview } from '@/components/preview/ResumePreview'
 import { SortableSectionList } from '@/components/editor/SortableSectionList'
-import { SectionToggle } from '@/components/editor/SectionToggle'
 import { ContactForm } from '@/components/editor/ContactForm'
 import { ProfileForm } from '@/components/editor/ProfileForm'
 import { SkillsForm } from '@/components/editor/SkillsForm'
@@ -16,16 +14,29 @@ import { ProjectsForm } from '@/components/editor/ProjectsForm'
 import { EducationForm } from '@/components/editor/EducationForm'
 import { CertificationsForm } from '@/components/editor/CertificationsForm'
 import { RefereesForm } from '@/components/editor/RefereesForm'
-import { Button } from '@/components/ui/button'
 
 const debouncedSave = createDebouncedSaver(1000)
 
+const sectionLabel: Record<string, string> = {
+  contact: 'Contact Information',
+  profile: 'Career Profile',
+  skills: 'Technical Skills',
+  experience: 'Work Experience',
+  projects: 'Selected Projects',
+  education: 'Education',
+  certifications: 'Certifications',
+  referees: 'Referees',
+}
+
 export default function Home() {
   const [data, setData] = useState<ResumeData>(defaultResumeData)
-  const [activeSection, setActiveSection] = useState<string>('contact')
-  const [isExporting, setIsExporting] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['contact']))
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const panelRef = useRef<HTMLDivElement>(null)
+  const isDragging = useRef(false)
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -73,6 +84,18 @@ export default function Home() {
         meta: { ...prev.meta, activeStyle: style, lastModified: new Date().toISOString() },
       }
       debouncedSave(next)
+      return next
+    })
+  }, [])
+
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
       return next
     })
   }, [])
@@ -133,19 +156,42 @@ export default function Home() {
     reader.readAsText(file)
   }, [])
 
-  const sectionLabel: Record<string, string> = {
-    contact: 'Contact',
-    profile: 'Profile',
-    skills: 'Skills',
-    experience: 'Experience',
-    projects: 'Projects',
-    education: 'Education',
-    certifications: 'Certifications',
-    referees: 'Referees',
-  }
+  // Resizer logic
+  const handleMouseDown = useCallback(() => {
+    isDragging.current = true
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+  }, [])
 
-  const renderEditor = () => {
-    switch (activeSection) {
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current || !panelRef.current) return
+      const workspace = panelRef.current.parentElement
+      if (!workspace) return
+      const rect = workspace.getBoundingClientRect()
+      const newWidth = e.clientX - rect.left
+      const clamped = Math.max(280, Math.min(560, newWidth))
+      panelRef.current.style.width = `${clamped}px`
+    }
+
+    const handleMouseUp = () => {
+      if (isDragging.current) {
+        isDragging.current = false
+        document.body.style.cursor = ''
+        document.body.style.userSelect = ''
+      }
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [])
+
+  const renderSectionForm = (id: string) => {
+    switch (id) {
       case 'contact':
         return <ContactForm contact={data.contact} onChange={(c) => update('contact', c)} />
       case 'profile':
@@ -169,85 +215,99 @@ export default function Home() {
 
   if (!loaded) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[#080a0f]">
-        <div className="text-text-secondary font-serif text-lg">Loading...</div>
+      <div className="app">
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-fraunces), serif', fontSize: '18px' }}>Loading...</div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#080a0f]">
-      <EditorPanel>
-        <div className="mb-5">
-          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <span className="text-[11px] font-semibold text-text-secondary uppercase tracking-wide">Sections</span>
-            <div className="flex items-center gap-2">
-              <select
-                value={data.meta.activeStyle}
-                onChange={(e) => handleThemeChange(e.target.value as ResumeData['meta']['activeStyle'])}
-                className="bg-panel border border-border-panel rounded-md text-text-primary text-xs px-2 py-1 outline-none focus:border-accent-dim"
-              >
-                <option value="classic-blue">Classic Blue</option>
-                <option value="crimson-block">Crimson Block</option>
-                <option value="minimal-mono">Minimal Mono</option>
-              </select>
-              <Button size="sm" variant="outline" onClick={handleExportJSON}>
-                Export JSON
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                Import JSON
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".json"
-                className="hidden"
-                onChange={(e) => e.target.files?.[0] && handleImportJSON(e.target.files[0])}
-              />
-              <Button size="sm" onClick={handleExportPDF} disabled={isExporting}>
-                {isExporting ? 'Exporting…' : 'Export PDF'}
-              </Button>
-            </div>
+    <div className="app">
+      {/* Toolbar */}
+      <div className="toolbar">
+        <div className="toolbar-brand">
+          <h1>Typographer<span className="brand-accent">.</span></h1>
+        </div>
+        <div className="toolbar-actions">
+          <div className="style-selector">
+            <label>Style</label>
+            <select
+              value={data.meta.activeStyle}
+              onChange={(e) => handleThemeChange(e.target.value as ResumeData['meta']['activeStyle'])}
+            >
+              <option value="classic-blue">Classic Blue</option>
+              <option value="crimson-block">Crimson Block</option>
+              <option value="minimal-mono">Minimal Mono</option>
+            </select>
           </div>
-          <SortableSectionList sections={data.sections} onReorder={handleReorder}>
-            {(section) => (
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => setActiveSection(section.id)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    setActiveSection(section.id)
-                  }
-                }}
-                className={`flex-1 flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors cursor-pointer ${
-                  activeSection === section.id
-                    ? 'bg-accent/15 text-accent font-medium'
-                    : 'text-text-secondary hover:bg-workspace hover:text-text-primary'
-                }`}
-              >
-                <span>{sectionLabel[section.id] ?? section.id}</span>
-                <SectionToggle
-                  enabled={section.enabled}
-                  onChange={(enabled) => handleToggle(section.id, enabled)}
-                />
-              </div>
-            )}
-          </SortableSectionList>
+          <button className="btn btn-secondary btn-small" onClick={handleExportJSON}>
+            <span>Export JSON</span>
+          </button>
+          <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
+            <span>Import JSON</span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              style={{ display: 'none' }}
+              onChange={(e) => e.target.files?.[0] && handleImportJSON(e.target.files[0])}
+            />
+          </label>
+          <button className="btn btn-primary" onClick={handleExportPDF} disabled={isExporting}>
+            <span>{isExporting ? 'Exporting…' : 'Download PDF'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Workspace */}
+      <div className="workspace">
+        {/* Editor Panel */}
+        <div ref={panelRef} className="editor-panel" style={{ width: 380 }}>
+          <div className="editor-header">
+            <h2>Editor</h2>
+          </div>
+          <div className="editor-scroll">
+            <SortableSectionList sections={data.sections} onReorder={handleReorder}>
+              {(section) => (
+                <div
+                  className={`section-card ${expandedSections.has(section.id) ? 'expanded' : ''}`}
+                >
+                  <div
+                    className="section-header"
+                    onClick={() => toggleExpand(section.id)}
+                  >
+                    <span className="section-title">
+                      <span className="chevron">›</span>
+                      {sectionLabel[section.id] ?? section.id}
+                    </span>
+                    <div
+                      className="toggle-switch"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleToggle(section.id, !section.enabled)
+                      }}
+                    >
+                      <span className="toggle-label">{section.enabled ? 'On' : 'Off'}</span>
+                      <span className={`toggle-track ${section.enabled ? 'active' : ''}`} />
+                    </div>
+                  </div>
+                  <div className="section-body">
+                    {renderSectionForm(section.id)}
+                  </div>
+                </div>
+              )}
+            </SortableSectionList>
+          </div>
         </div>
 
-        <div className="border-t border-border-panel pt-5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-semibold text-text-secondary uppercase tracking-wide">
-              {sectionLabel[activeSection] ?? activeSection}
-            </span>
-          </div>
-          {renderEditor()}
-        </div>
-      </EditorPanel>
+        {/* Resizer */}
+        <div className="resizer" onMouseDown={handleMouseDown} />
 
-      <ResumePreview data={data} />
+        {/* Preview */}
+        <ResumePreview data={data} onDownloadPDF={handleExportPDF} />
+      </div>
     </div>
   )
 }

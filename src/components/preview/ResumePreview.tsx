@@ -6,9 +6,10 @@ import { ResumeData } from '@/lib/resume-data'
 
 interface ResumePreviewProps {
   data: ResumeData
+  onDownloadPDF?: () => void
 }
 
-export function ResumePreview({ data }: ResumePreviewProps) {
+export function ResumePreview({ data, onDownloadPDF }: ResumePreviewProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const areaRef = useRef<HTMLDivElement>(null)
   const paperRef = useRef<HTMLDivElement>(null)
@@ -36,11 +37,15 @@ export function ResumePreview({ data }: ResumePreviewProps) {
     return () => window.removeEventListener('resize', scalePaper)
   }, [data])
 
+  const handlePreviewPDF = () => {
+    window.print()
+  }
+
   return (
-    <div ref={areaRef} className="relative flex-1 bg-[#080a0f] overflow-auto">
+    <div ref={areaRef} className="preview-area">
       <div
         ref={wrapperRef}
-        className="absolute origin-top-left transition-transform duration-300"
+        className="paper-wrapper"
       >
         <div
           ref={paperRef}
@@ -59,6 +64,17 @@ export function ResumePreview({ data }: ResumePreviewProps) {
           <ResumeRenderer data={data} />
         </div>
       </div>
+
+      {onDownloadPDF && (
+        <div className="pdf-actions">
+          <button className="btn btn-secondary" onClick={handlePreviewPDF}>
+            Preview PDF
+          </button>
+          <button className="btn btn-primary" onClick={onDownloadPDF}>
+            Download PDF
+          </button>
+        </div>
+      )}
     </div>
   )
 }
