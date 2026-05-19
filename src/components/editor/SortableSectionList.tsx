@@ -64,7 +64,7 @@ export function SortableSectionList({ sections, onReorder, children }: SortableS
     })
   )
 
-  const items = useMemo(() => sections.filter((s) => s.enabled).map((s) => s.id), [sections])
+  const items = useMemo(() => sections.map((s) => s.id), [sections])
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event

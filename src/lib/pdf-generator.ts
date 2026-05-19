@@ -5,7 +5,7 @@ body { margin: 0; font-family: 'Times New Roman', serif; font-size: 10.5pt; line
 .paper { width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #faf8f5; box-sizing: border-box; }
 .paper-name { font-family: 'Times New Roman', serif; font-size: 22pt; font-weight: 600; margin-bottom: 4pt; letter-spacing: -0.3pt; text-align: center; }
 .paper-contact { font-size: 9.5pt; color: #555; margin-bottom: 14pt; text-align: center; }
-.paper-section { margin-bottom: 12pt; }
+.paper-section { margin-bottom: 12pt; page-break-inside: avoid; }
 .paper-section-title { font-family: 'Times New Roman', serif; font-size: 11pt; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6pt; }
 .paper-item-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2pt; }
 .paper-item-title { font-weight: 700; font-size: 10.5pt; }

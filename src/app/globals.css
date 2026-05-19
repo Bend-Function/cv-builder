@@ -157,6 +157,7 @@ body {
 
 .paper-section {
   margin-bottom: 12pt;
+  page-break-inside: avoid;
 }
 
 .paper-item-header {
