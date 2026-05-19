@@ -1,5 +1,6 @@
 import { ResumeData } from './resume-data'
 import { loadPaperCSS, loadThemeCSS } from './theme-css'
+import { getBrowser } from './browser-pool'
 
 async function buildHTML(data: ResumeData): Promise<string> {
   const React = await import('react')
@@ -19,25 +20,20 @@ async function buildHTML(data: ResumeData): Promise<string> {
 }
 
 export async function generatePDF(data: ResumeData): Promise<Buffer> {
-  const chromium = (await import('puppeteer-core')).default
-  const executablePath = await import('@sparticuz/chromium').then((m) => m.default.executablePath())
-
-  const browser = await chromium.launch({
-    executablePath,
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  })
-
+  const browser = await getBrowser()
   const page = await browser.newPage()
-  const html = await buildHTML(data)
-  await page.setContent(html, { waitUntil: 'domcontentloaded' })
+  try {
+    const html = await buildHTML(data)
+    await page.setContent(html, { waitUntil: 'domcontentloaded' })
 
-  const pdf = await page.pdf({
-    format: 'A4',
-    printBackground: true,
-    margin: { top: '15mm', right: '20mm', bottom: '15mm', left: '20mm' },
-  })
+    const pdf = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '15mm', right: '20mm', bottom: '15mm', left: '20mm' },
+    })
 
-  await browser.close()
-  return Buffer.from(pdf)
+    return Buffer.from(pdf)
+  } finally {
+    await page.close()
+  }
 }
