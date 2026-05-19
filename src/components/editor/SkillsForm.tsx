@@ -21,11 +21,12 @@ export function SkillsForm({ skills, onChange }: SkillsFormProps) {
         <div key={i} className="item-card">
           <div className="item-header">
             <span className="item-number">#{i + 1}</span>
-            <button onClick={() => remove(i)} className="item-delete">×</button>
+            <button type="button" onClick={() => remove(i)} className="item-delete" aria-label={`Remove skill category ${i + 1}`}>×</button>
           </div>
           <div className="form-group">
-            <label className="form-label">Category</label>
+            <label htmlFor={`skill-${i}-category`} className="form-label">Category</label>
             <input
+              id={`skill-${i}-category`}
               type="text"
               value={skill.category}
               onChange={(e) => update(i, 'category', e.target.value)}
@@ -33,8 +34,9 @@ export function SkillsForm({ skills, onChange }: SkillsFormProps) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">Skills (comma-separated)</label>
+            <label htmlFor={`skill-${i}-items`} className="form-label">Skills (comma-separated)</label>
             <input
+              id={`skill-${i}-items`}
               type="text"
               value={skill.items}
               onChange={(e) => update(i, 'items', e.target.value)}
@@ -43,7 +45,7 @@ export function SkillsForm({ skills, onChange }: SkillsFormProps) {
           </div>
         </div>
       ))}
-      <button onClick={add} className="add-btn">+ Add Category</button>
+      <button type="button" onClick={add} className="add-btn">+ Add Category</button>
     </div>
   )
 }

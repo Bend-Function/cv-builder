@@ -47,7 +47,7 @@ export function ResumePreview({ data }: ResumePreviewProps) {
   }, [data])
 
   return (
-    <div ref={areaRef} className="preview-area">
+    <main ref={areaRef} aria-label="Resume preview" className="preview-area">
       <div ref={viewportRef} className="paper-viewport">
         <div ref={wrapperRef} className="paper-wrapper">
           <div
@@ -58,6 +58,6 @@ export function ResumePreview({ data }: ResumePreviewProps) {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

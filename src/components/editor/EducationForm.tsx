@@ -27,28 +27,28 @@ export function EducationForm({ education, onChange }: EducationFormProps) {
         <div key={edu.id} className="item-card">
           <div className="item-header">
             <span className="item-number">#{i + 1}</span>
-            <button onClick={() => remove(i)} className="item-delete">×</button>
+            <button type="button" onClick={() => remove(i)} className="item-delete" aria-label={`Remove education ${i + 1}`}>×</button>
           </div>
           <div className="form-group">
-            <label className="form-label">Degree</label>
-            <input type="text" value={edu.degree} onChange={(e) => update(i, 'degree', e.target.value)} className="form-input" />
+            <label htmlFor={`edu-${edu.id}-degree`} className="form-label">Degree</label>
+            <input id={`edu-${edu.id}-degree`} type="text" value={edu.degree} onChange={(e) => update(i, 'degree', e.target.value)} className="form-input" />
           </div>
           <div className="form-group">
-            <label className="form-label">Institution</label>
-            <input type="text" value={edu.institution} onChange={(e) => update(i, 'institution', e.target.value)} className="form-input" />
+            <label htmlFor={`edu-${edu.id}-institution`} className="form-label">Institution</label>
+            <input id={`edu-${edu.id}-institution`} type="text" value={edu.institution} onChange={(e) => update(i, 'institution', e.target.value)} className="form-input" />
           </div>
           <div className="form-group">
-            <label className="form-label">Location</label>
-            <input type="text" value={edu.location} onChange={(e) => update(i, 'location', e.target.value)} className="form-input" />
+            <label htmlFor={`edu-${edu.id}-location`} className="form-label">Location</label>
+            <input id={`edu-${edu.id}-location`} type="text" value={edu.location} onChange={(e) => update(i, 'location', e.target.value)} className="form-input" />
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Start Date</label>
-              <input type="text" value={edu.startDate} onChange={(e) => update(i, 'startDate', e.target.value)} className="form-input" />
+              <label htmlFor={`edu-${edu.id}-startDate`} className="form-label">Start Date</label>
+              <input id={`edu-${edu.id}-startDate`} type="text" value={edu.startDate} onChange={(e) => update(i, 'startDate', e.target.value)} className="form-input" />
             </div>
             <div className="form-group">
-              <label className="form-label">End Date</label>
-              <input type="text" value={edu.endDate} onChange={(e) => update(i, 'endDate', e.target.value)} className="form-input" />
+              <label htmlFor={`edu-${edu.id}-endDate`} className="form-label">End Date</label>
+              <input id={`edu-${edu.id}-endDate`} type="text" value={edu.endDate} onChange={(e) => update(i, 'endDate', e.target.value)} className="form-input" />
             </div>
           </div>
           <div className="form-group">
@@ -56,15 +56,15 @@ export function EducationForm({ education, onChange }: EducationFormProps) {
             {edu.details.map((d, j) => (
               <div key={j} className="bullet-row">
                 <span className="bullet-dot">›</span>
-                <input type="text" value={d} onChange={(e) => setDetail(i, j, e.target.value)} className="bullet-input" />
-                <button onClick={() => removeDetail(i, j)} className="item-delete">×</button>
+                <input type="text" value={d} onChange={(e) => setDetail(i, j, e.target.value)} className="bullet-input" aria-label={`Detail ${j + 1}`} />
+                <button type="button" onClick={() => removeDetail(i, j)} className="item-delete" aria-label={`Remove detail ${j + 1}`}>×</button>
               </div>
             ))}
-            <button onClick={() => addDetail(i)} className="add-btn">+ Add detail</button>
+            <button type="button" onClick={() => addDetail(i)} className="add-btn">+ Add detail</button>
           </div>
         </div>
       ))}
-      <button onClick={add} className="add-btn">+ Add Education</button>
+      <button type="button" onClick={add} className="add-btn">+ Add Education</button>
     </div>
   )
 }

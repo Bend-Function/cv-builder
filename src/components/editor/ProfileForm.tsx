@@ -55,8 +55,11 @@ export function ProfileForm({ profile, onChange }: ProfileFormProps) {
 
       {profile.type === 'paragraph' ? (
         <div className="form-group">
-          <label className="form-label">Profile Summary</label>
+          <label htmlFor="profile-content" className="form-label">
+            Profile Summary
+          </label>
           <textarea
+            id="profile-content"
             value={profile.content}
             onChange={(e) => setContent(e.target.value)}
             rows={4}
@@ -76,11 +79,13 @@ export function ProfileForm({ profile, onChange }: ProfileFormProps) {
                 onChange={(e) => setBullet(i, e.target.value)}
                 className="bullet-input"
                 placeholder="Key point about your background"
+                aria-label={`Profile point ${i + 1}`}
               />
               <button
                 type="button"
                 onClick={() => removeBullet(i)}
                 className="item-delete"
+                aria-label={`Remove profile point ${i + 1}`}
               >
                 ×
               </button>

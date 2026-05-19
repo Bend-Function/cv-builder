@@ -31,28 +31,28 @@ export function ExperienceForm({ experience, onChange }: ExperienceFormProps) {
         <div key={exp.id} className="item-card">
           <div className="item-header">
             <span className="item-number">#{i + 1}</span>
-            <button onClick={() => remove(i)} className="item-delete">×</button>
+            <button type="button" onClick={() => remove(i)} className="item-delete" aria-label={`Remove experience ${i + 1}`}>×</button>
           </div>
           <div className="form-group">
-            <label className="form-label">Job Title</label>
-            <input type="text" value={exp.title} onChange={(e) => update(i, 'title', e.target.value)} className="form-input" />
+            <label htmlFor={`exp-${exp.id}-title`} className="form-label">Job Title</label>
+            <input id={`exp-${exp.id}-title`} type="text" value={exp.title} onChange={(e) => update(i, 'title', e.target.value)} className="form-input" />
           </div>
           <div className="form-group">
-            <label className="form-label">Company</label>
-            <input type="text" value={exp.company} onChange={(e) => update(i, 'company', e.target.value)} className="form-input" />
+            <label htmlFor={`exp-${exp.id}-company`} className="form-label">Company</label>
+            <input id={`exp-${exp.id}-company`} type="text" value={exp.company} onChange={(e) => update(i, 'company', e.target.value)} className="form-input" />
           </div>
           <div className="form-group">
-            <label className="form-label">Location</label>
-            <input type="text" value={exp.location ?? ''} onChange={(e) => update(i, 'location', e.target.value)} className="form-input" />
+            <label htmlFor={`exp-${exp.id}-location`} className="form-label">Location</label>
+            <input id={`exp-${exp.id}-location`} type="text" value={exp.location ?? ''} onChange={(e) => update(i, 'location', e.target.value)} className="form-input" />
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Start Date</label>
-              <input type="text" value={exp.startDate} onChange={(e) => update(i, 'startDate', e.target.value)} className="form-input" />
+              <label htmlFor={`exp-${exp.id}-startDate`} className="form-label">Start Date</label>
+              <input id={`exp-${exp.id}-startDate`} type="text" value={exp.startDate} onChange={(e) => update(i, 'startDate', e.target.value)} className="form-input" />
             </div>
             <div className="form-group">
-              <label className="form-label">End Date</label>
-              <input type="text" value={exp.endDate} onChange={(e) => update(i, 'endDate', e.target.value)} className="form-input" />
+              <label htmlFor={`exp-${exp.id}-endDate`} className="form-label">End Date</label>
+              <input id={`exp-${exp.id}-endDate`} type="text" value={exp.endDate} onChange={(e) => update(i, 'endDate', e.target.value)} className="form-input" />
             </div>
           </div>
           <div className="form-group">
@@ -66,15 +66,16 @@ export function ExperienceForm({ experience, onChange }: ExperienceFormProps) {
                   onChange={(e) => setBullet(i, j, e.target.value)}
                   placeholder="Action verb + Task + Outcome"
                   className="bullet-input"
+                  aria-label={`Achievement ${j + 1}`}
                 />
-                <button onClick={() => removeBullet(i, j)} className="item-delete">×</button>
+                <button type="button" onClick={() => removeBullet(i, j)} className="item-delete" aria-label={`Remove achievement ${j + 1}`}>×</button>
               </div>
             ))}
-            <button onClick={() => addBullet(i)} className="add-btn">+ Add bullet</button>
+            <button type="button" onClick={() => addBullet(i)} className="add-btn">+ Add bullet</button>
           </div>
         </div>
       ))}
-      <button onClick={add} className="add-btn">+ Add Experience</button>
+      <button type="button" onClick={add} className="add-btn">+ Add Experience</button>
     </div>
   )
 }

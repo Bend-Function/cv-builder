@@ -187,6 +187,18 @@ export default function Home() {
     document.body.style.userSelect = 'none'
   }, [])
 
+  const handleResizerKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!panelRef.current) return
+    const current = panelRef.current.offsetWidth
+    let next = current
+    if (e.key === 'ArrowLeft') next = current - 16
+    if (e.key === 'ArrowRight') next = current + 16
+    if (e.key === 'Home') next = 280
+    if (e.key === 'End') next = Math.floor(window.innerWidth / 2)
+    next = Math.max(280, Math.min(Math.floor(window.innerWidth / 2), next))
+    panelRef.current.style.width = `${next}px`
+  }, [])
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging.current || !panelRef.current) return
@@ -247,17 +259,20 @@ export default function Home() {
     )
   }
 
+  const panelWidth = panelRef.current?.offsetWidth ?? 380
+
   return (
     <div className="app">
       {/* Toolbar */}
-      <div className="toolbar">
+      <header role="banner" className="toolbar">
         <div className="toolbar-brand">
           <h1>Typographer<span className="brand-accent">.</span></h1>
         </div>
         <div className="toolbar-actions">
           <div className="style-selector">
-            <label>Style</label>
+            <label htmlFor="theme-select">Style</label>
             <select
+              id="theme-select"
               value={data.meta.activeStyle}
               onChange={(e) => handleThemeChange(e.target.value as ThemeId)}
             >
@@ -279,19 +294,31 @@ export default function Home() {
               onChange={(e) => e.target.files?.[0] && handleImportJSON(e.target.files[0])}
             />
           </label>
-          <button className="btn btn-secondary" onClick={handlePreviewPDF} disabled={isExporting}>
+          <button
+            className="btn btn-secondary"
+            onClick={handlePreviewPDF}
+            disabled={isExporting}
+            aria-busy={isExporting}
+            aria-label={isExporting ? 'Exporting PDF' : 'Preview PDF'}
+          >
             <span>{isExporting ? 'Exporting…' : 'Preview'}</span>
           </button>
-          <button className="btn btn-primary" onClick={handleExportPDF} disabled={isExporting}>
+          <button
+            className="btn btn-primary"
+            onClick={handleExportPDF}
+            disabled={isExporting}
+            aria-busy={isExporting}
+            aria-label={isExporting ? 'Exporting PDF' : 'Download PDF'}
+          >
             <span>{isExporting ? 'Exporting…' : 'Download PDF'}</span>
           </button>
         </div>
-      </div>
+      </header>
 
       {/* Workspace */}
       <div className="workspace">
         {/* Editor Panel */}
-        <div ref={panelRef} className="editor-panel" style={{ width: 380 }}>
+        <aside aria-label="Resume editor" ref={panelRef} className="editor-panel" style={{ width: 380 }}>
           <div className="editor-header">
             <h2>Editor</h2>
           </div>
@@ -301,36 +328,51 @@ export default function Home() {
                 <div
                   className={`section-card ${expandedSections.has(section.id) ? 'expanded' : ''}`}
                 >
-                  <div
-                    className="section-header"
-                    onClick={() => toggleExpand(section.id)}
-                  >
-                    <span className="section-title">
-                      <span className="chevron">›</span>
-                      {sectionLabel[section.id] ?? section.id}
-                    </span>
-                    <div
+                  <div className="section-card-header-row">
+                    <button
+                      type="button"
+                      className="section-header"
+                      aria-expanded={expandedSections.has(section.id)}
+                      aria-controls={`section-body-${section.id}`}
+                      onClick={() => toggleExpand(section.id)}
+                    >
+                      <span className="section-title">
+                        <span className="chevron" aria-hidden="true">›</span>
+                        {sectionLabel[section.id] ?? section.id}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={section.enabled}
                       className="toggle-switch"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleToggle(section.id, !section.enabled)
-                      }}
+                      onClick={() => handleToggle(section.id, !section.enabled)}
                     >
                       <span className="toggle-label">{section.enabled ? 'On' : 'Off'}</span>
                       <span className={`toggle-track ${section.enabled ? 'active' : ''}`} />
-                    </div>
+                    </button>
                   </div>
-                  <div className="section-body">
+                  <div id={`section-body-${section.id}`} className="section-body">
                     {renderSectionForm(section.id)}
                   </div>
                 </div>
               )}
             </SortableSectionList>
           </div>
-        </div>
+        </aside>
 
         {/* Resizer */}
-        <div className="resizer" onMouseDown={handleMouseDown} />
+        <div
+          className="resizer"
+          role="separator"
+          aria-orientation="vertical"
+          aria-valuenow={panelWidth}
+          aria-valuemin={280}
+          aria-valuemax={Math.floor(typeof window !== 'undefined' ? window.innerWidth / 2 : 960)}
+          tabIndex={0}
+          onMouseDown={handleMouseDown}
+          onKeyDown={handleResizerKeyDown}
+        />
 
         {/* Preview */}
         <ResumePreview data={data} />
