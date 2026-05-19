@@ -1,10 +1,18 @@
 import puppeteer, { Browser } from 'puppeteer-core'
-import chromium from '@sparticuz/chromium'
+import type Chromium from '@sparticuz/chromium'
 
-// Ensure @sparticuz/chromium knows to extract Amazon Linux 2023 shared libraries
-// (libnss3.so etc.) on Vercel's serverless runtime.
-if (!process.env.AWS_LAMBDA_JS_RUNTIME) {
-  process.env.AWS_LAMBDA_JS_RUNTIME = 'nodejs22.x'
+type ChromiumModule = typeof Chromium
+
+let chromiumModule: Promise<ChromiumModule> | null = null
+
+async function getChromium(): Promise<ChromiumModule> {
+  // @sparticuz/chromium configures LD_LIBRARY_PATH at import time. Vercel Node
+  // 20/22 needs the AL2023 shared libraries for libnss3.so, etc.
+  process.env.AWS_LAMBDA_JS_RUNTIME ??= 'nodejs22.x'
+  chromiumModule ??= import('@sparticuz/chromium').then(
+    (mod) => (mod as unknown as { default: ChromiumModule }).default,
+  )
+  return chromiumModule
 }
 
 let cached: Promise<Browser> | null = null
@@ -15,6 +23,7 @@ export async function getBrowser(): Promise<Browser> {
     if (b.connected) return b
     cached = null
   }
+  const chromium = await getChromium()
   cached = puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
