@@ -22,6 +22,21 @@ const themeCSS = `
 .theme-minimal-mono .paper { font-family: 'Times New Roman', serif; }
 .theme-minimal-mono .paper-name { font-family: 'Times New Roman', serif !important; font-weight: 700 !important; }
 .theme-minimal-mono .paper-section-title { font-family: 'Times New Roman', serif !important; font-size: 10.5pt; font-weight: 700; text-transform: none; letter-spacing: 0.5px; border-bottom: 0.5pt solid #1a1a1a; padding-bottom: 2pt; }
+.theme-functional { font-family: Arial, Helvetica, sans-serif; }
+.theme-functional .paper-name { font-family: Arial, Helvetica, sans-serif !important; font-size: 24pt; font-weight: 700; text-align: left; margin: 0 0 6pt 0; letter-spacing: 0; color: #1a1a1a; }
+.theme-functional .paper-contact-block--functional { border-bottom: 0.5pt solid #b5b5b5; padding-bottom: 8pt; margin-bottom: 10pt; }
+.theme-functional .paper-contact--stack { text-align: left; font-size: 10pt; color: #1a1a1a; line-height: 1.4; }
+.theme-functional .paper-contact--stack > div { display: block; }
+.theme-functional .paper-section { border-bottom: 0.5pt solid #b5b5b5; padding-bottom: 10pt; margin-bottom: 10pt; }
+.theme-functional .paper-section:last-of-type { border-bottom: 0; }
+.theme-functional .paper-section-title { font-family: Arial, Helvetica, sans-serif !important; font-size: 12pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #1a1a1a; border-bottom: 0; padding-bottom: 0; margin-bottom: 8pt; }
+.theme-functional .paper-item--functional { display: grid; grid-template-columns: 180px 1fr; gap: 16pt; margin-bottom: 10pt; page-break-inside: avoid; }
+.theme-functional .paper-item-meta { font-size: 9.5pt; color: #1a1a1a; }
+.theme-functional .paper-item-org { font-weight: 700; margin-bottom: 1pt; }
+.theme-functional .paper-item-location, .theme-functional .paper-item-date { color: #1a1a1a; font-size: 9.5pt; }
+.theme-functional .paper-item-role { font-weight: 700; font-size: 10.5pt; margin-bottom: 2pt; }
+.theme-functional .paper-item-content .paper-bullets { margin-top: 2pt; }
+.theme-functional .paper-footer { margin-top: 24pt; padding-top: 8pt; border-top: 0.5pt solid #b5b5b5; text-align: left; font-size: 9pt; color: #1a1a1a; }
 `
 
 async function buildHTML(data: ResumeData): Promise<string> {
