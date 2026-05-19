@@ -1,5 +1,5 @@
 import puppeteer, { Browser } from 'puppeteer-core'
-import chromium from '@sparticuz/chromium'
+import chromium from '@sparticuz/chromium-min'
 
 let cached: Promise<Browser> | null = null
 
