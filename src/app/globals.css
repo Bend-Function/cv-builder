@@ -160,6 +160,15 @@ body {
   page-break-inside: avoid;
 }
 
+.paper-section-title {
+  font-family: var(--font-fraunces), serif;
+  font-size: 11pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 6pt;
+}
+
 .paper-item-header {
   display: flex;
   justify-content: space-between;
@@ -202,6 +211,43 @@ body {
   position: absolute;
   left: 0;
   color: #555;
+}
+
+/* ============================================================
+   STYLE THEMES
+   ============================================================ */
+
+.theme-classic-blue .paper-section-title {
+  color: #1e4d8b;
+  border-bottom: 1.5pt solid #1e4d8b;
+  padding-bottom: 2pt;
+}
+
+.theme-crimson-block .paper-section-title {
+  background: #8b2635;
+  color: #fff;
+  padding: 2pt 6pt;
+  display: inline-block;
+  letter-spacing: 0.8px;
+}
+
+.theme-minimal-mono .paper {
+  font-family: 'Times New Roman', serif;
+}
+
+.theme-minimal-mono .paper-name {
+  font-family: 'Times New Roman', serif !important;
+  font-weight: 700 !important;
+}
+
+.theme-minimal-mono .paper-section-title {
+  font-family: 'Times New Roman', serif !important;
+  font-size: 10.5pt;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  border-bottom: 0.5pt solid var(--paper-text);
+  padding-bottom: 2pt;
 }
 
 /* ============================================================
@@ -437,6 +483,7 @@ body {
   background: #080a0f;
   position: relative;
   overflow: hidden;
+  padding: 24px;
 }
 
 /* PDF actions */

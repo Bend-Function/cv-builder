@@ -21,8 +21,12 @@ export function ResumePreview({ data, onDownloadPDF }: ResumePreviewProps) {
       const paper = paperRef.current
       if (!wrapper || !area || !paper) return
 
-      const scale = Math.min((area.clientWidth - 48) / paper.offsetWidth, 1)
-      const finalScale = Math.max(scale, 0.4)
+      const scale = Math.min(
+        (area.clientWidth - 48) / paper.offsetWidth,
+        (area.clientHeight - 48) / paper.offsetHeight,
+        1
+      )
+      const finalScale = Math.max(scale, 0.55)
 
       const scaledW = paper.offsetWidth * finalScale
       const scaledH = paper.offsetHeight * finalScale

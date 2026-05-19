@@ -19,8 +19,9 @@ body { margin: 0; font-family: 'Times New Roman', serif; font-size: 10.5pt; line
 const themeCSS = `
 .theme-classic-blue .paper-section-title { color: #1e4d8b; border-bottom: 1.5pt solid #1e4d8b; padding-bottom: 2pt; }
 .theme-crimson-block .paper-section-title { background: #8b2635; color: #fff; padding: 2pt 6pt; display: inline-block; letter-spacing: 0.8px; }
-.theme-minimal-mono .paper-name, .theme-minimal-mono .paper-section-title { font-family: 'Times New Roman', serif !important; font-weight: 700 !important; }
-.theme-minimal-mono .paper-section-title { font-size: 10.5pt; text-transform: none; letter-spacing: 0.5px; border-bottom: 0.5pt solid #1a1a1a; padding-bottom: 2pt; }
+.theme-minimal-mono .paper { font-family: 'Times New Roman', serif; }
+.theme-minimal-mono .paper-name { font-family: 'Times New Roman', serif !important; font-weight: 700 !important; }
+.theme-minimal-mono .paper-section-title { font-family: 'Times New Roman', serif !important; font-size: 10.5pt; font-weight: 700; text-transform: none; letter-spacing: 0.5px; border-bottom: 0.5pt solid #1a1a1a; padding-bottom: 2pt; }
 `
 
 async function buildHTML(data: ResumeData): Promise<string> {
