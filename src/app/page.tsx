@@ -306,7 +306,7 @@ export default function Home() {
         <div className="resizer" onMouseDown={handleMouseDown} />
 
         {/* Preview */}
-        <ResumePreview data={data} onDownloadPDF={handleExportPDF} />
+        <ResumePreview data={data} />
       </div>
     </div>
   )

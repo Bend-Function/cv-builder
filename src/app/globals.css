@@ -502,14 +502,6 @@ body {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* PDF actions */
-.pdf-actions {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
-  display: flex;
-  gap: 8px;
-}
 
 /* Section accordion */
 .section-card {
