@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { ResumeData } from '@/lib/resume-data'
 
 interface ResumeRendererProps {
@@ -236,7 +237,7 @@ export function ResumeRenderer({ data }: ResumeRendererProps) {
         .slice()
         .sort((a, b) => a.order - b.order)
         .map((section) => (
-          <div key={section.id}>{sectionMap[section.id]}</div>
+          <Fragment key={section.id}>{sectionMap[section.id]}</Fragment>
         ))}
       {isFunctional && (contact.fullName || contact.phone || contact.email) && (
         <div className="paper-footer">

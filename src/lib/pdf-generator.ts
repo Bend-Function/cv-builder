@@ -27,8 +27,7 @@ const themeCSS = `
 .theme-functional .paper-contact-block--functional { border-bottom: 0.5pt solid #b5b5b5; padding-bottom: 8pt; margin-bottom: 10pt; }
 .theme-functional .paper-contact--stack { text-align: left; font-size: 10pt; color: #1a1a1a; line-height: 1.4; }
 .theme-functional .paper-contact--stack > div { display: block; }
-.theme-functional .paper-section { border-bottom: 0.5pt solid #b5b5b5; padding-bottom: 10pt; margin-bottom: 10pt; }
-.theme-functional .paper-section:last-of-type { border-bottom: 0; }
+.theme-functional .paper-section + .paper-section { border-top: 0.5pt solid #b5b5b5; padding-top: 10pt; margin-top: 10pt; }
 .theme-functional .paper-section-title { font-family: Arial, Helvetica, sans-serif !important; font-size: 12pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #1a1a1a; border-bottom: 0; padding-bottom: 0; margin-bottom: 8pt; }
 .theme-functional .paper-item--functional { display: grid; grid-template-columns: 180px 1fr; gap: 16pt; margin-bottom: 10pt; page-break-inside: avoid; }
 .theme-functional .paper-item-meta { font-size: 9.5pt; color: #1a1a1a; }
