@@ -6,7 +6,7 @@ export function Standard({ skills }: { skills: SkillCategory[] }) {
       <div className="paper-section-title">Technical Skills</div>
       {skills.map((skill, i) =>
         skill.category && skill.items ? (
-          <div key={i} style={{ marginBottom: '3pt', fontSize: '9.5pt' }}>
+          <div key={i} className="paper-skill-row">
             <strong>{skill.category}:</strong> {skill.items}
           </div>
         ) : null
@@ -21,7 +21,7 @@ export function Functional({ skills }: { skills: SkillCategory[] }) {
       <div className="paper-section-title">Technical Skills</div>
       {skills.map((skill, i) =>
         skill.category && skill.items ? (
-          <div key={i} style={{ marginBottom: '3pt', fontSize: '9.5pt' }}>
+          <div key={i} className="paper-skill-row">
             <strong>{skill.category}:</strong> {skill.items}
           </div>
         ) : null

@@ -14,7 +14,7 @@ export function Standard({ education }: { education: EducationItem[] }) {
               {edu.startDate} – {edu.endDate}
             </span>
           </div>
-          <div className="paper-item-subtitle" style={{ marginBottom: '2pt' }}>
+          <div className="paper-item-subtitle paper-edu-subtitle">
             {edu.institution}
             {edu.location ? `, ${edu.location}` : ''}
           </div>

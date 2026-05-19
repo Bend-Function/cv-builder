@@ -5,14 +5,14 @@ export function Standard({ referees }: { referees: RefereesConfig }) {
     <div className="paper-section">
       <div className="paper-section-title">Referees</div>
       {referees.mode === 'on-request' && (
-        <p style={{ fontSize: '9.5pt', margin: 0, fontStyle: 'italic' }}>Available upon request</p>
+        <p className="paper-referee-note">Available upon request</p>
       )}
       {referees.mode === 'full' &&
         referees.list.map((ref, i) => (
-          <div key={i} style={{ fontSize: '9.5pt', marginBottom: '4pt' }}>
+          <div key={i} className="paper-referee-item">
             <strong>{ref.name}</strong> — {ref.title}, {ref.organisation}
             <br />
-            <span style={{ color: '#555' }}>{ref.contact}</span>
+            <span className="paper-referee-contact">{ref.contact}</span>
           </div>
         ))}
     </div>
@@ -24,14 +24,14 @@ export function Functional({ referees }: { referees: RefereesConfig }) {
     <div className="paper-section">
       <div className="paper-section-title">Referees</div>
       {referees.mode === 'on-request' && (
-        <p style={{ fontSize: '9.5pt', margin: 0, fontStyle: 'italic' }}>Available upon request</p>
+        <p className="paper-referee-note">Available upon request</p>
       )}
       {referees.mode === 'full' &&
         referees.list.map((ref, i) => (
-          <div key={i} style={{ fontSize: '9.5pt', marginBottom: '4pt' }}>
+          <div key={i} className="paper-referee-item">
             <strong>{ref.name}</strong> — {ref.title}, {ref.organisation}
             <br />
-            <span style={{ color: '#555' }}>{ref.contact}</span>
+            <span className="paper-referee-contact">{ref.contact}</span>
           </div>
         ))}
     </div>

@@ -5,7 +5,7 @@ export function Standard({ profile }: { profile: Profile }) {
     <div className="paper-section">
       <div className="paper-section-title">Profile</div>
       {profile.type === 'paragraph' ? (
-        <p style={{ fontSize: '9.5pt', margin: 0 }}>{profile.content}</p>
+        <p className="paper-paragraph">{profile.content}</p>
       ) : (
         <ul className="paper-bullets">
           {profile.bullets.filter(Boolean).map((b, i) => (
@@ -22,7 +22,7 @@ export function Functional({ profile }: { profile: Profile }) {
     <div className="paper-section">
       <div className="paper-section-title">Profile</div>
       {profile.type === 'paragraph' ? (
-        <p style={{ fontSize: '9.5pt', margin: 0 }}>{profile.content}</p>
+        <p className="paper-paragraph">{profile.content}</p>
       ) : (
         <ul className="paper-bullets">
           {profile.bullets.filter(Boolean).map((b, i) => (

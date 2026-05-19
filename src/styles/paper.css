@@ -75,3 +75,42 @@
   left: 0;
   color: #555;
 }
+
+.paper-contact-wrapper {
+  text-align: center;
+  margin-bottom: 14pt;
+}
+
+.paper-paragraph {
+  font-size: 9.5pt;
+  margin: 0;
+}
+
+.paper-skill-row {
+  margin-bottom: 3pt;
+  font-size: 9.5pt;
+}
+
+.paper-edu-subtitle {
+  margin-bottom: 2pt;
+}
+
+.paper-cert-item {
+  font-size: 9.5pt;
+  margin-bottom: 2pt;
+}
+
+.paper-referee-note {
+  font-size: 9.5pt;
+  margin: 0;
+  font-style: italic;
+}
+
+.paper-referee-item {
+  font-size: 9.5pt;
+  margin-bottom: 4pt;
+}
+
+.paper-referee-contact {
+  color: #555;
+}

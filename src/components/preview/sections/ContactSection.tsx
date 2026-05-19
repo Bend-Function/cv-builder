@@ -4,7 +4,7 @@ export function Standard({ contact }: { contact: Contact }) {
   const contactParts = [contact.city, contact.phone, contact.email, contact.linkedIn, contact.github].filter(Boolean)
 
   return (
-    <div style={{ textAlign: 'center', marginBottom: '14pt' }}>
+    <div className="paper-contact-wrapper">
       <h1 className="paper-name">{contact.fullName || 'Your Name'}</h1>
       <div className="paper-contact">{contactParts.join(' | ')}</div>
     </div>

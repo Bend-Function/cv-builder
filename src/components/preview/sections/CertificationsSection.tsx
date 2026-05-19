@@ -5,7 +5,7 @@ export function Standard({ certifications }: { certifications: CertificationItem
     <div className="paper-section">
       <div className="paper-section-title">Certifications</div>
       {certifications.map((cert) => (
-        <div key={cert.id} style={{ fontSize: '9.5pt', marginBottom: '2pt' }}>
+        <div key={cert.id} className="paper-cert-item">
           <strong>{cert.name}</strong> — {cert.issuer}
           {cert.date ? `, ${cert.date}` : ''}
         </div>
