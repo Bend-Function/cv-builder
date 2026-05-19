@@ -39,8 +39,7 @@ export function ProfileForm({ profile, onChange }: ProfileFormProps) {
           <button
             type="button"
             onClick={() => setType('paragraph')}
-            className={`btn ${profile.type === 'paragraph' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ flex: 1 }}
+            className={`btn flex-1 ${profile.type === 'paragraph' ? 'btn-primary' : 'btn-secondary'}`}
           >
             Paragraph
           </button>

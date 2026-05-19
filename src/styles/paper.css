@@ -1,5 +1,13 @@
 .paper {
   --paper-text: #1a1a1a;
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  padding: 15mm 20mm;
+  color: #1a1a1a;
+  font-size: 10.5pt;
+  line-height: 1.45;
+  box-sizing: border-box;
 }
 
 .paper-name {

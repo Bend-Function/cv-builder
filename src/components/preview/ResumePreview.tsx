@@ -53,16 +53,6 @@ export function ResumePreview({ data }: ResumePreviewProps) {
           <div
             ref={paperRef}
             className={`paper theme-${data.meta.activeStyle}`}
-            style={{
-              width: '210mm',
-              minHeight: '297mm',
-              background: '#faf8f5',
-              padding: '15mm 20mm',
-              color: '#1a1a1a',
-              fontSize: '10.5pt',
-              lineHeight: 1.45,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.5), 0 12px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
-            }}
           >
             <ResumeRenderer data={data} />
           </div>

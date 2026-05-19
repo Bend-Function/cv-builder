@@ -240,8 +240,8 @@ export default function Home() {
   if (!loaded) {
     return (
       <div className="app">
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-fraunces), serif', fontSize: '18px' }}>Loading...</div>
+        <div className="app-loading">
+          <div className="app-loading-text">Loading...</div>
         </div>
       </div>
     )
@@ -269,13 +269,13 @@ export default function Home() {
           <button className="btn btn-secondary btn-small" onClick={handleExportJSON}>
             <span>Export JSON</span>
           </button>
-          <label className="btn btn-secondary btn-small" style={{ cursor: 'pointer' }}>
+          <label className="btn btn-secondary btn-small btn-import">
             <span>Import JSON</span>
             <input
               ref={fileInputRef}
               type="file"
               accept=".json"
-              style={{ display: 'none' }}
+              className="file-input-hidden"
               onChange={(e) => e.target.files?.[0] && handleImportJSON(e.target.files[0])}
             />
           </label>

@@ -695,3 +695,32 @@ body {
   transform-origin: top left;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.paper-wrapper .paper {
+  background: #faf8f5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 12px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* App loading state */
+.app-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-loading-text {
+  color: var(--text-secondary);
+  font-family: var(--font-fraunces), serif;
+  font-size: 18px;
+}
+
+/* Import label cursor */
+.btn-import {
+  cursor: pointer;
+}
+
+/* Hidden file input */
+.file-input-hidden {
+  display: none;
+}
