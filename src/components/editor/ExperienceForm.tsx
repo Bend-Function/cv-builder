@@ -41,6 +41,10 @@ export function ExperienceForm({ experience, onChange }: ExperienceFormProps) {
             <label className="form-label">Company</label>
             <input type="text" value={exp.company} onChange={(e) => update(i, 'company', e.target.value)} className="form-input" />
           </div>
+          <div className="form-group">
+            <label className="form-label">Location</label>
+            <input type="text" value={exp.location ?? ''} onChange={(e) => update(i, 'location', e.target.value)} className="form-input" />
+          </div>
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Start Date</label>

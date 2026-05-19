@@ -37,6 +37,10 @@ export function ProjectsForm({ projects, onChange }: ProjectsFormProps) {
             <label className="form-label">Context</label>
             <input type="text" value={proj.context} onChange={(e) => update(i, 'context', e.target.value)} className="form-input" />
           </div>
+          <div className="form-group">
+            <label className="form-label">Location</label>
+            <input type="text" value={proj.location ?? ''} onChange={(e) => update(i, 'location', e.target.value)} className="form-input" />
+          </div>
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Start Date</label>
