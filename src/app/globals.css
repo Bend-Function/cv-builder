@@ -717,6 +717,7 @@ body {
 
 .paper-wrapper .paper {
   background: #faf8f5;
+  padding: 15mm 20mm;
   box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 12px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
 }
 
