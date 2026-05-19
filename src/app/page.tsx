@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { Settings } from 'lucide-react'
 import { ResumeData, defaultResumeData, Section } from '@/lib/resume-data'
-import { THEMES, type ThemeId } from '@/lib/themes'
-import { loadResumeData, createDebouncedSaver } from '@/lib/storage'
+import { type ThemeId } from '@/lib/themes'
+import { loadResumeData, createDebouncedSaver, loadPresets, savePresets, loadActivePresetId, saveActivePresetId } from '@/lib/storage'
 import { exportResumeJSON, importResumeJSON } from '@/lib/validate'
+import { type LayoutConfig, type Preset } from '@/lib/layout-config'
 import { ResumePreview } from '@/components/preview/ResumePreview'
 import { SortableSectionList } from '@/components/editor/SortableSectionList'
 import { ContactForm } from '@/components/editor/ContactForm'
@@ -15,6 +17,7 @@ import { ProjectsForm } from '@/components/editor/ProjectsForm'
 import { EducationForm } from '@/components/editor/EducationForm'
 import { CertificationsForm } from '@/components/editor/CertificationsForm'
 import { RefereesForm } from '@/components/editor/RefereesForm'
+import { SettingsPanel } from '@/components/editor/SettingsPanel'
 
 const debouncedSave = createDebouncedSaver(1000)
 
@@ -34,6 +37,9 @@ export default function Home() {
   const [loaded, setLoaded] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['contact']))
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [presets, setPresets] = useState<Preset[]>([])
+  const [activePresetId, setActivePresetId] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const panelRef = useRef<HTMLDivElement>(null)
@@ -42,7 +48,11 @@ export default function Home() {
   // Load from localStorage on mount
   useEffect(() => {
     const saved = loadResumeData()
+    const loadedPresets = loadPresets()
+    const loadedActiveId = loadActivePresetId()
     setData(saved)
+    setPresets(loadedPresets)
+    setActivePresetId(loadedActiveId)
     setLoaded(true)
   }, [])
 
@@ -78,7 +88,7 @@ export default function Home() {
     })
   }, [])
 
-  const handleThemeChange = useCallback((style: ThemeId) => {
+  const handleUpdateTheme = useCallback((style: ThemeId) => {
     setData((prev) => {
       const next = {
         ...prev,
@@ -88,6 +98,65 @@ export default function Home() {
       return next
     })
   }, [])
+
+  const handleUpdateLayout = useCallback((layout: LayoutConfig) => {
+    setData((prev) => {
+      const next = {
+        ...prev,
+        meta: { ...prev.meta, layout, lastModified: new Date().toISOString() },
+      }
+      debouncedSave(next)
+      return next
+    })
+  }, [])
+
+  const handleSelectPreset = useCallback((preset: Preset) => {
+    setActivePresetId(preset.id)
+    saveActivePresetId(preset.id)
+    setData((prev) => {
+      const next = {
+        ...prev,
+        meta: {
+          ...prev.meta,
+          activeStyle: preset.themeId,
+          layout: { ...preset.layout },
+          lastModified: new Date().toISOString(),
+        },
+      }
+      debouncedSave(next)
+      return next
+    })
+  }, [])
+
+  const handleSavePreset = useCallback((preset: Preset) => {
+    setPresets((prev) => {
+      const next = [...prev, preset]
+      savePresets(next)
+      return next
+    })
+    setActivePresetId(preset.id)
+    saveActivePresetId(preset.id)
+  }, [])
+
+  const handleRenamePreset = useCallback((id: string, name: string) => {
+    setPresets((prev) => {
+      const next = prev.map((p) => (p.id === id ? { ...p, name } : p))
+      savePresets(next)
+      return next
+    })
+  }, [])
+
+  const handleDeletePreset = useCallback((id: string) => {
+    setPresets((prev) => {
+      const next = prev.filter((p) => p.id !== id)
+      savePresets(next)
+      return next
+    })
+    if (activePresetId === id) {
+      setActivePresetId(null)
+      saveActivePresetId(null)
+    }
+  }, [activePresetId])
 
   const toggleExpand = useCallback((id: string) => {
     setExpandedSections((prev) => {
@@ -269,18 +338,6 @@ export default function Home() {
           <h1>Typographer<span className="brand-accent">.</span></h1>
         </div>
         <div className="toolbar-actions">
-          <div className="style-selector">
-            <label htmlFor="theme-select">Style</label>
-            <select
-              id="theme-select"
-              value={data.meta.activeStyle}
-              onChange={(e) => handleThemeChange(e.target.value as ThemeId)}
-            >
-              {THEMES.map((t) => (
-                <option key={t.id} value={t.id}>{t.label}</option>
-              ))}
-            </select>
-          </div>
           <button className="btn btn-secondary btn-small" onClick={handleExportJSON}>
             <span>Export JSON</span>
           </button>
@@ -311,6 +368,14 @@ export default function Home() {
             aria-label={isExporting ? 'Exporting PDF' : 'Download PDF'}
           >
             <span>{isExporting ? 'Exporting…' : 'Download PDF'}</span>
+          </button>
+          <button
+            className="settings-btn"
+            onClick={() => setIsSettingsOpen(true)}
+            aria-label="Open settings"
+            title="Settings"
+          >
+            <Settings size={16} />
           </button>
         </div>
       </header>
@@ -377,6 +442,21 @@ export default function Home() {
         {/* Preview */}
         <ResumePreview data={data} />
       </div>
+
+      <SettingsPanel
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        layout={data.meta.layout}
+        activeStyle={data.meta.activeStyle}
+        presets={presets}
+        activePresetId={activePresetId}
+        onUpdateLayout={handleUpdateLayout}
+        onUpdateTheme={handleUpdateTheme}
+        onSelectPreset={handleSelectPreset}
+        onSavePreset={handleSavePreset}
+        onRenamePreset={handleRenamePreset}
+        onDeletePreset={handleDeletePreset}
+      />
     </div>
   )
 }
