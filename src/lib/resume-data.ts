@@ -1,7 +1,9 @@
+import { type ThemeId, DEFAULT_THEME } from './themes'
+
 export interface ResumeMeta {
   version: number
   lastModified: string
-  activeStyle: 'classic-blue' | 'crimson-block' | 'minimal-mono' | 'functional'
+  activeStyle: ThemeId
 }
 
 export interface Section {
@@ -108,7 +110,7 @@ export const defaultResumeData: ResumeData = {
   meta: {
     version: 1,
     lastModified: new Date().toISOString(),
-    activeStyle: 'classic-blue',
+    activeStyle: DEFAULT_THEME,
   },
   sections: [...defaultSections],
   contact: {

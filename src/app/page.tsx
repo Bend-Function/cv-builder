@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { ResumeData, defaultResumeData, Section } from '@/lib/resume-data'
+import { THEMES, type ThemeId } from '@/lib/themes'
 import { loadResumeData, createDebouncedSaver } from '@/lib/storage'
 import { exportResumeJSON, importResumeJSON } from '@/lib/validate'
 import { ResumePreview } from '@/components/preview/ResumePreview'
@@ -77,7 +78,7 @@ export default function Home() {
     })
   }, [])
 
-  const handleThemeChange = useCallback((style: ResumeData['meta']['activeStyle']) => {
+  const handleThemeChange = useCallback((style: ThemeId) => {
     setData((prev) => {
       const next = {
         ...prev,
@@ -258,12 +259,11 @@ export default function Home() {
             <label>Style</label>
             <select
               value={data.meta.activeStyle}
-              onChange={(e) => handleThemeChange(e.target.value as ResumeData['meta']['activeStyle'])}
+              onChange={(e) => handleThemeChange(e.target.value as ThemeId)}
             >
-              <option value="classic-blue">Classic Blue</option>
-              <option value="crimson-block">Crimson Block</option>
-              <option value="minimal-mono">Minimal Mono</option>
-              <option value="functional">Functional</option>
+              {THEMES.map((t) => (
+                <option key={t.id} value={t.id}>{t.label}</option>
+              ))}
             </select>
           </div>
           <button className="btn btn-secondary btn-small" onClick={handleExportJSON}>

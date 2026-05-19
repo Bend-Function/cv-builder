@@ -1,4 +1,5 @@
 import { ResumeData } from './resume-data'
+import { isThemeId } from './themes'
 
 export function isValidResumeData(obj: unknown): obj is ResumeData {
   if (!obj || typeof obj !== 'object') return false
@@ -12,6 +13,7 @@ export function isValidResumeData(obj: unknown): obj is ResumeData {
 
   const meta = data.meta as Record<string, unknown>
   if (typeof meta.version !== 'number') return false
+  if (!isThemeId(meta.activeStyle)) return false
 
   return true
 }
