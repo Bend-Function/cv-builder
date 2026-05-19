@@ -129,6 +129,29 @@ export default function Home() {
     }
   }, [data])
 
+  const handlePreviewPDF = useCallback(async () => {
+    setIsExporting(true)
+    try {
+      const res = await fetch('/api/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'PDF generation failed' }))
+        alert(err.error || 'PDF generation failed')
+        return
+      }
+      const blob = await res.blob()
+      const url = window.URL.createObjectURL(blob)
+      window.open(url, '_blank')
+    } catch (e) {
+      alert('PDF generation failed')
+    } finally {
+      setIsExporting(false)
+    }
+  }, [data])
+
   const handleExportJSON = useCallback(() => {
     const json = exportResumeJSON(data)
     const blob = new Blob([json], { type: 'application/json' })
@@ -255,6 +278,9 @@ export default function Home() {
               onChange={(e) => e.target.files?.[0] && handleImportJSON(e.target.files[0])}
             />
           </label>
+          <button className="btn btn-secondary" onClick={handlePreviewPDF} disabled={isExporting}>
+            <span>{isExporting ? 'Exporting…' : 'Preview'}</span>
+          </button>
           <button className="btn btn-primary" onClick={handleExportPDF} disabled={isExporting}>
             <span>{isExporting ? 'Exporting…' : 'Download PDF'}</span>
           </button>

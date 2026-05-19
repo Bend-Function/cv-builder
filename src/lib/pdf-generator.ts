@@ -1,8 +1,8 @@
 import { ResumeData } from './resume-data'
 
 const paperCSS = `
-body { margin: 0; font-family: 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.45; color: #1a1a1a; }
-.paper { width: 210mm; min-height: 297mm; padding: 15mm 20mm; background: #faf8f5; box-sizing: border-box; }
+body { margin: 0; font-family: 'Times New Roman', serif; font-size: 10.5pt; line-height: 1.45; color: #1a1a1a; background: #fff; }
+.paper { width: 210mm; min-height: 297mm; background: #fff; box-sizing: border-box; }
 .paper-name { font-family: 'Times New Roman', serif; font-size: 22pt; font-weight: 600; margin-bottom: 4pt; letter-spacing: -0.3pt; text-align: center; }
 .paper-contact { font-size: 9.5pt; color: #555; margin-bottom: 14pt; text-align: center; }
 .paper-section { margin-bottom: 12pt; page-break-inside: avoid; }
@@ -56,7 +56,7 @@ export async function generatePDF(data: ResumeData): Promise<Buffer> {
   const pdf = await page.pdf({
     format: 'A4',
     printBackground: true,
-    margin: { top: 0, right: 0, bottom: 0, left: 0 },
+    margin: { top: '15mm', right: '20mm', bottom: '15mm', left: '20mm' },
   })
 
   await browser.close()
