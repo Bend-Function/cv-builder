@@ -193,7 +193,7 @@ export default function Home() {
       if (!workspace) return
       const rect = workspace.getBoundingClientRect()
       const newWidth = e.clientX - rect.left
-      const clamped = Math.max(280, Math.min(560, newWidth))
+      const clamped = Math.max(280, Math.min(window.innerWidth / 2, newWidth))
       panelRef.current.style.width = `${clamped}px`
     }
 

@@ -415,7 +415,7 @@ body {
 .editor-panel {
   width: 380px;
   min-width: 280px;
-  max-width: 560px;
+  max-width: 50vw;
   background: var(--bg-workspace);
   border-right: 1px solid var(--border-panel);
   display: flex;
