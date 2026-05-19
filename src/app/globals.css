@@ -478,12 +478,28 @@ body {
 .preview-area {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   background: #080a0f;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px;
+}
+
+/* Paper viewport — sized to the scaled paper so scroll area is correct */
+.paper-viewport {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Paper wrapper — absolute inside viewport, scaled via transform */
+.paper-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* PDF actions */
