@@ -1,19 +1,28 @@
 .paper {
   --paper-text: #1a1a1a;
+  --body-font: 'Times New Roman', serif;
+  --heading-font: 'Times New Roman', serif;
+  --body-font-size: 10.5pt;
+  --heading-font-size: 11pt;
+  --name-font-size: 22pt;
+  --section-gap: 12pt;
+  --title-gap: 6pt;
+
   width: 210mm;
   min-height: 297mm;
   background: #fff;
-  color: #1a1a1a;
-  font-size: 10.5pt;
+  color: var(--paper-text);
+  font-size: var(--body-font-size);
   line-height: 1.45;
   box-sizing: border-box;
+  font-family: var(--body-font);
 }
 
 .paper-name {
-  font-family: var(--font-fraunces), serif;
-  font-size: 22pt;
+  font-family: var(--heading-font);
+  font-size: var(--name-font-size);
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--paper-text);
   margin-bottom: 4pt;
   letter-spacing: -0.3pt;
 }
@@ -26,17 +35,17 @@
 }
 
 .paper-section {
-  margin-bottom: 12pt;
+  margin-bottom: var(--section-gap);
   page-break-inside: avoid;
 }
 
 .paper-section-title {
-  font-family: var(--font-fraunces), serif;
-  font-size: 11pt;
+  font-family: var(--heading-font);
+  font-size: var(--heading-font-size);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  margin-bottom: 6pt;
+  margin-bottom: var(--title-gap);
 }
 
 .paper-item-header {

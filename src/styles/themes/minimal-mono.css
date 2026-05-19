@@ -1,14 +1,13 @@
-.theme-minimal-mono .paper {
-  font-family: 'Times New Roman', serif;
+.theme-minimal-mono {
+  --body-font: 'Times New Roman', serif;
+  --heading-font: 'Times New Roman', serif;
 }
 
 .theme-minimal-mono .paper-name {
-  font-family: 'Times New Roman', serif !important;
-  font-weight: 700 !important;
+  font-weight: 700;
 }
 
 .theme-minimal-mono .paper-section-title {
-  font-family: 'Times New Roman', serif !important;
   font-size: 10.5pt;
   font-weight: 700;
   text-transform: none;

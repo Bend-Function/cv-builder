@@ -1,9 +1,11 @@
 import { type ThemeId, DEFAULT_THEME } from './themes'
+import { type LayoutConfig, defaultLayoutConfig } from './layout-config'
 
 export interface ResumeMeta {
   version: number
   lastModified: string
   activeStyle: ThemeId
+  layout: LayoutConfig
 }
 
 export interface Section {
@@ -111,6 +113,7 @@ export const defaultResumeData: ResumeData = {
     version: 1,
     lastModified: new Date().toISOString(),
     activeStyle: DEFAULT_THEME,
+    layout: defaultLayoutConfig,
   },
   sections: [...defaultSections],
   contact: {

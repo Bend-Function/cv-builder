@@ -1,16 +1,16 @@
 /* Functional — sans-serif, intra-section two-column items, section separators */
 .theme-functional {
-  font-family: Arial, Helvetica, sans-serif;
+  --body-font: Arial, Helvetica, sans-serif;
+  --heading-font: Arial, Helvetica, sans-serif;
+  --name-font-size: 24pt;
+  --heading-font-size: 12pt;
 }
 
 .theme-functional .paper-name {
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 24pt;
   font-weight: 700;
   text-align: left;
   margin: 0 0 6pt 0;
   letter-spacing: 0;
-  color: var(--paper-text);
 }
 
 .theme-functional .paper-contact-block--functional {
@@ -37,12 +37,9 @@
 }
 
 .theme-functional .paper-section-title {
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 12pt;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--paper-text);
   border-bottom: 0;
   padding-bottom: 0;
   margin-bottom: 8pt;

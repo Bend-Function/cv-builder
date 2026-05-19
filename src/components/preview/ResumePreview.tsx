@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { ResumeRenderer } from './ResumeRenderer'
 import { ResumeData } from '@/lib/resume-data'
+import { layoutToCSSVariables } from '@/lib/layout-config'
 
 interface ResumePreviewProps {
   data: ResumeData
@@ -13,6 +14,8 @@ export function ResumePreview({ data }: ResumePreviewProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const paperRef = useRef<HTMLDivElement>(null)
+
+  const layout = data.meta.layout
 
   useEffect(() => {
     function scalePaper() {
@@ -46,6 +49,12 @@ export function ResumePreview({ data }: ResumePreviewProps) {
     }
   }, [data])
 
+  const cssVars = layoutToCSSVariables(layout)
+  const paperStyle: React.CSSProperties = {
+    ...cssVars,
+    padding: `${layout.marginTop}mm ${layout.marginRight}mm ${layout.marginBottom}mm ${layout.marginLeft}mm`,
+  }
+
   return (
     <main ref={areaRef} aria-label="Resume preview" className="preview-area">
       <div ref={viewportRef} className="paper-viewport">
@@ -53,6 +62,7 @@ export function ResumePreview({ data }: ResumePreviewProps) {
           <div
             ref={paperRef}
             className={`paper theme-${data.meta.activeStyle}`}
+            style={paperStyle}
           >
             <ResumeRenderer data={data} />
           </div>
