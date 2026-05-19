@@ -46,8 +46,7 @@ export function ProfileForm({ profile, onChange }: ProfileFormProps) {
           <button
             type="button"
             onClick={() => setType('bulletPoints')}
-            className={`btn ${profile.type === 'bulletPoints' ? 'btn-primary' : 'btn-secondary'}`}
-            style={{ flex: 1 }}
+            className={`btn flex-1 ${profile.type === 'bulletPoints' ? 'btn-primary' : 'btn-secondary'}`}
           >
             Bullet Points
           </button>
