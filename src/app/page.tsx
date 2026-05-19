@@ -263,6 +263,7 @@ export default function Home() {
               <option value="classic-blue">Classic Blue</option>
               <option value="crimson-block">Crimson Block</option>
               <option value="minimal-mono">Minimal Mono</option>
+              <option value="functional">Functional</option>
             </select>
           </div>
           <button className="btn btn-secondary btn-small" onClick={handleExportJSON}>

@@ -1,7 +1,7 @@
 export interface ResumeMeta {
   version: number
   lastModified: string
-  activeStyle: 'classic-blue' | 'crimson-block' | 'minimal-mono'
+  activeStyle: 'classic-blue' | 'crimson-block' | 'minimal-mono' | 'functional'
 }
 
 export interface Section {
