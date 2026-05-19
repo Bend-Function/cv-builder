@@ -35,6 +35,7 @@ export interface ExperienceItem {
   id: string
   title: string
   company: string
+  location?: string
   startDate: string
   endDate: string
   bullets: string[]
@@ -44,6 +45,7 @@ export interface ProjectItem {
   id: string
   name: string
   context: string
+  location?: string
   startDate: string
   endDate: string
   bullets: string[]
@@ -138,6 +140,7 @@ export const defaultResumeData: ResumeData = {
       id: 'exp-1',
       title: 'Software Engineering Intern',
       company: 'TechCorp, Sydney',
+      location: 'Sydney, NSW',
       startDate: 'Dec 2024',
       endDate: 'Current',
       bullets: [
@@ -150,6 +153,7 @@ export const defaultResumeData: ResumeData = {
       id: 'exp-2',
       title: 'Junior Web Developer',
       company: 'Digital Studio, Melbourne',
+      location: 'Melbourne, VIC',
       startDate: 'Jun 2024',
       endDate: 'Nov 2024',
       bullets: [
@@ -164,6 +168,7 @@ export const defaultResumeData: ResumeData = {
       id: 'proj-1',
       name: 'E-Commerce Platform',
       context: 'Personal Project | MERN Stack',
+      location: '',
       startDate: 'Aug 2024',
       endDate: 'Nov 2024',
       bullets: [
@@ -176,6 +181,7 @@ export const defaultResumeData: ResumeData = {
       id: 'proj-2',
       name: 'Real-Time Chat Application',
       context: 'UNSW | Team of 3',
+      location: 'Sydney, NSW',
       startDate: 'Mar 2024',
       endDate: 'Jun 2024',
       bullets: [
