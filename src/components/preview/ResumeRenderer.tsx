@@ -197,7 +197,7 @@ export function ResumeRenderer({ data }: ResumeRendererProps) {
             <div key={cert.id} className="paper-item--functional">
               <div className="paper-item-meta">
                 <div className="paper-item-org">{cert.issuer}</div>
-                <div className="paper-item-date">{cert.date}</div>
+                {cert.date && <div className="paper-item-date">{cert.date}</div>}
               </div>
               <div className="paper-item-content">
                 <div className="paper-item-role">{cert.name}</div>
