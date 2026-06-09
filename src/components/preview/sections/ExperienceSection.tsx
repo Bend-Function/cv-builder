@@ -9,7 +9,10 @@ export function Standard({ experience }: { experience: ExperienceItem[] }) {
           <div className="paper-item-header">
             <div>
               <span className="paper-item-title">{exp.title}</span>{' '}
-              <span className="paper-item-subtitle">| {exp.company}</span>
+              <span className="paper-item-subtitle">
+                | {exp.company}
+                {exp.location ? `, ${exp.location}` : ''}
+              </span>
             </div>
             <span className="paper-item-date">
               {exp.startDate} – {exp.endDate}
