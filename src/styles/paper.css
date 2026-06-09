@@ -36,7 +36,8 @@
 
 .paper-section {
   margin-bottom: var(--section-gap);
-  page-break-inside: avoid;
+  break-inside: auto;
+  page-break-inside: auto;
 }
 
 .paper-section-title {
@@ -46,6 +47,8 @@
   text-transform: uppercase;
   letter-spacing: 1.2px;
   margin-bottom: var(--title-gap);
+  break-after: avoid;
+  page-break-after: avoid;
 }
 
 .paper-item-header {
@@ -53,6 +56,8 @@
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 2pt;
+  break-after: avoid;
+  page-break-after: avoid;
 }
 
 .paper-item-title {
