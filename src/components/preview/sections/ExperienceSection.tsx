@@ -11,7 +11,7 @@ export function Standard({ experience }: { experience: ExperienceItem[] }) {
               <span className="paper-item-title">{exp.title}</span>{' '}
               <span className="paper-item-subtitle">
                 | {exp.company}
-                {exp.location ? `, ${exp.location}` : ''}
+                {exp.location ? ` | ${exp.location}` : ''}
               </span>
             </div>
             <span className="paper-item-date">
