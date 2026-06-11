@@ -94,10 +94,14 @@
 
 .paper-bullets li::before,
 .paper-markdown li::before {
-  content: '\2022';
+  content: '';
   position: absolute;
-  left: 0;
-  color: #555;
+  left: 1pt;
+  top: 0.58em;
+  width: 3pt;
+  height: 3pt;
+  border-radius: 50%;
+  background: #555;
 }
 
 .paper-markdown p {
@@ -116,11 +120,17 @@
 }
 
 .paper-markdown ul ul li::before {
-  content: '\25E6';
+  left: 1.5pt;
+  top: 0.62em;
+  width: 2.4pt;
+  height: 2.4pt;
 }
 
 .paper-markdown ul ul ul li::before {
-  content: '\25AA';
+  top: 0.62em;
+  width: 2.4pt;
+  height: 2.4pt;
+  border-radius: 0;
 }
 
 .paper-markdown code {
