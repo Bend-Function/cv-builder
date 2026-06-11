@@ -1,4 +1,5 @@
 import { ProjectItem } from '@/lib/resume-data'
+import { MarkdownBody } from '../MarkdownBody'
 
 export function Standard({ projects }: { projects: ProjectItem[] }) {
   return (
@@ -15,13 +16,7 @@ export function Standard({ projects }: { projects: ProjectItem[] }) {
               {proj.startDate} – {proj.endDate}
             </span>
           </div>
-          {proj.bullets.length > 0 && (
-            <ul className="paper-bullets">
-              {proj.bullets.filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
-              ))}
-            </ul>
-          )}
+          <MarkdownBody text={proj.body} />
         </div>
       ))}
     </div>
@@ -41,11 +36,7 @@ export function Functional({ projects }: { projects: ProjectItem[] }) {
           </div>
           <div className="paper-item-content">
             <div className="paper-item-role">{proj.context}</div>
-            {proj.bullets.length > 0 && (
-              <ul className="paper-bullets">
-                {proj.bullets.filter(Boolean).map((b, i) => (<li key={i}>{b}</li>))}
-              </ul>
-            )}
+            <MarkdownBody text={proj.body} />
           </div>
         </div>
       ))}

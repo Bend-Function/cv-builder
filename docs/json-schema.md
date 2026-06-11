@@ -29,9 +29,10 @@ All ten keys are required for a "complete" resume. The importer's minimum bar is
 
 ```ts
 interface ResumeMeta {
-  version: number              // schema version, currently 1
+  version: number              // schema version, currently 2
   lastModified: string         // ISO 8601 timestamp, updated on every edit
-  activeStyle: 'classic-blue' | 'crimson-block' | 'minimal-mono'
+  activeStyle: 'classic-blue' | 'crimson-block' | 'minimal-mono' | 'functional'
+  layout: LayoutConfig
 }
 ```
 
@@ -40,6 +41,7 @@ interface ResumeMeta {
 | `version` | `number` | Used by the validator. Bump if you make breaking schema changes. |
 | `lastModified` | `string` | ISO 8601. The editor refreshes this on every state change. |
 | `activeStyle` | `enum` | Drives `theme-*` class on the paper and the inline theme CSS in the PDF. |
+| `layout` | `object` | Page margins, section gap, paragraph gap, and line-height controls. |
 
 ### Themes
 
@@ -48,6 +50,7 @@ interface ResumeMeta {
 | `classic-blue` | Navy blue section titles with an underline. Body in Times. |
 | `crimson-block` | Crimson section-title "blocks" (white text on a dark red background). |
 | `minimal-mono` | Serif throughout, thin underline on titles, no colour accents. |
+| `functional` | Sans-serif, section dividers, and two-column work/project metadata. |
 
 ---
 
@@ -126,7 +129,7 @@ The unused field can be left as `""` or `[]`; both are kept around so toggling t
 ```ts
 interface SkillCategory {
   category: string   // e.g. "Languages", "Frameworks"
-  items: string[]    // e.g. ["TypeScript", "Python", "Go"]
+  items: string      // e.g. "TypeScript, Python, Go"
 }
 ```
 
@@ -141,13 +144,24 @@ interface ExperienceItem {
   id: string         // stable client-side id (e.g. crypto.randomUUID())
   title: string      // role title
   company: string    // employer name
+  location?: string  // free-form location, e.g. "Sydney, NSW"
   startDate: string  // free-form text, e.g. "Jan 2022"
   endDate: string    // free-form text, e.g. "Present"
-  bullets: string[]  // achievement bullets
+  body: string       // markdown body: paragraphs and nested bullet lists
 }
 ```
 
 Dates are deliberately stored as strings, not Date objects — the UI lets users type whatever convention they prefer ("2024-01", "Jan 2024", "Q1 2024").
+
+`body` supports markdown for prose and bullet lists. Raw HTML is not part of the supported authoring surface. Example:
+
+```md
+Built **React** services for customer workflows.
+
+- Improved API response time by 40%
+  - Migrated hot paths to AWS Lambda
+    - Added dashboards for latency tracking
+```
 
 ---
 
@@ -158,9 +172,10 @@ interface ProjectItem {
   id: string
   name: string       // project title
   context: string    // organisation / employer / "Personal"
+  location?: string
   startDate: string
   endDate: string
-  bullets: string[]
+  body: string       // markdown body: paragraphs and nested bullet lists
 }
 ```
 

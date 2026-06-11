@@ -42,7 +42,8 @@ export interface ExperienceItem {
   location?: string
   startDate: string
   endDate: string
-  bullets: string[]
+  body: string
+  bullets?: string[]
 }
 
 export interface ProjectItem {
@@ -52,7 +53,8 @@ export interface ProjectItem {
   location?: string
   startDate: string
   endDate: string
-  bullets: string[]
+  body: string
+  bullets?: string[]
 }
 
 export interface EducationItem {
@@ -110,7 +112,7 @@ export const defaultSections: Section[] = [
 
 export const defaultResumeData: ResumeData = {
   meta: {
-    version: 1,
+    version: 2,
     lastModified: new Date().toISOString(),
     activeStyle: DEFAULT_THEME,
     layout: defaultLayoutConfig,
@@ -148,11 +150,11 @@ export const defaultResumeData: ResumeData = {
       location: 'Sydney, NSW',
       startDate: 'Dec 2024',
       endDate: 'Current',
-      bullets: [
-        'Developed and deployed microservices using Node.js and AWS Lambda, reducing API response time by 40%',
-        'Collaborated with a team of 5 engineers to redesign the customer dashboard using React and TypeScript',
-        'Implemented automated testing with Jest and Cypress, increasing test coverage from 45% to 82%',
-      ],
+      body: [
+        '- Developed and deployed microservices using **Node.js** and AWS Lambda, reducing API response time by 40%',
+        '- Collaborated with a team of 5 engineers to redesign the customer dashboard using React and TypeScript',
+        '- Implemented automated testing with Jest and Cypress, increasing test coverage from 45% to 82%',
+      ].join('\n'),
     },
     {
       id: 'exp-2',
@@ -161,11 +163,12 @@ export const defaultResumeData: ResumeData = {
       location: 'Melbourne, VIC',
       startDate: 'Jun 2024',
       endDate: 'Nov 2024',
-      bullets: [
-        'Built responsive landing pages for 8+ clients using Next.js and Tailwind CSS',
-        'Integrated REST APIs and third-party services including Stripe and SendGrid',
-        'Mentored two new interns on Git workflows and code review best practices',
-      ],
+      body: [
+        '- Built responsive landing pages for 8+ clients using Next.js and Tailwind CSS',
+        '- Integrated REST APIs and third-party services including Stripe and SendGrid',
+        '  - Included Stripe and SendGrid workflows',
+        '- Mentored two new interns on Git workflows and code review best practices',
+      ].join('\n'),
     },
   ],
   projects: [
@@ -176,11 +179,13 @@ export const defaultResumeData: ResumeData = {
       location: '',
       startDate: 'Aug 2024',
       endDate: 'Nov 2024',
-      bullets: [
-        'Built full-stack e-commerce app with React, Node.js, MongoDB and Stripe payment integration',
-        'Implemented JWT authentication, role-based access control and admin dashboard',
-        'Deployed on Vercel and Render with CI/CD pipeline via GitHub Actions',
-      ],
+      body: [
+        'Personal project built to practice production-grade full-stack delivery.',
+        '',
+        '- Built full-stack e-commerce app with React, Node.js, MongoDB and Stripe payment integration',
+        '- Implemented JWT authentication, role-based access control and admin dashboard',
+        '- Deployed on Vercel and Render with CI/CD pipeline via GitHub Actions',
+      ].join('\n'),
     },
     {
       id: 'proj-2',
@@ -189,11 +194,11 @@ export const defaultResumeData: ResumeData = {
       location: 'Sydney, NSW',
       startDate: 'Mar 2024',
       endDate: 'Jun 2024',
-      bullets: [
-        'Developed real-time messaging app using Socket.io, React and Express with 200+ concurrent users',
-        'Designed MongoDB schema for message threads, user presence and read receipts',
-        'Achieved Distinction grade; praised for clean architecture and comprehensive documentation',
-      ],
+      body: [
+        '- Developed real-time messaging app using Socket.io, React and Express with 200+ concurrent users',
+        '- Designed MongoDB schema for message threads, user presence and read receipts',
+        '- Achieved Distinction grade; praised for clean architecture and comprehensive documentation',
+      ].join('\n'),
     },
   ],
   education: [

@@ -1,4 +1,5 @@
 import { ExperienceItem } from '@/lib/resume-data'
+import { MarkdownBody } from '../MarkdownBody'
 
 export function Standard({ experience }: { experience: ExperienceItem[] }) {
   return (
@@ -18,13 +19,7 @@ export function Standard({ experience }: { experience: ExperienceItem[] }) {
               {exp.startDate} – {exp.endDate}
             </span>
           </div>
-          {exp.bullets.length > 0 && (
-            <ul className="paper-bullets">
-              {exp.bullets.filter(Boolean).map((b, i) => (
-                <li key={i}>{b}</li>
-              ))}
-            </ul>
-          )}
+          <MarkdownBody text={exp.body} />
         </div>
       ))}
     </div>
@@ -44,11 +39,7 @@ export function Functional({ experience }: { experience: ExperienceItem[] }) {
           </div>
           <div className="paper-item-content">
             <div className="paper-item-role">{exp.title}</div>
-            {exp.bullets.length > 0 && (
-              <ul className="paper-bullets">
-                {exp.bullets.filter(Boolean).map((b, i) => (<li key={i}>{b}</li>))}
-              </ul>
-            )}
+            <MarkdownBody text={exp.body} />
           </div>
         </div>
       ))}

@@ -1,51 +1,22 @@
-import { ResumeData, defaultResumeData, defaultSections } from './resume-data'
-import { defaultLayoutConfig, type Preset } from './layout-config'
+import { ResumeData, defaultResumeData } from './resume-data'
+import { createPreset, defaultLayoutConfig, type Preset } from './layout-config'
 import { THEMES } from './themes'
+import { migrateResumeData } from './resume-migration'
 
 const STORAGE_KEY = 'cv-data'
 const STORAGE_KEY_PRESETS = 'cv-presets'
 const STORAGE_KEY_ACTIVE_PRESET = 'cv-active-preset-id'
 
 export function loadResumeData(): ResumeData {
-  if (typeof window === 'undefined') return { ...defaultResumeData }
+  if (typeof window === 'undefined') return migrateResumeData(defaultResumeData)
 
   const saved = localStorage.getItem(STORAGE_KEY)
-  if (!saved) return { ...defaultResumeData }
+  if (!saved) return migrateResumeData(defaultResumeData)
 
   try {
-    const parsed = JSON.parse(saved) as ResumeData
-    if (!parsed.contact) return { ...defaultResumeData }
-
-    if (!Array.isArray(parsed.sections)) {
-      parsed.sections = []
-    }
-
-    const existingIds = new Set(parsed.sections.map((s) => s.id))
-    defaultSections.forEach((ds) => {
-      if (!existingIds.has(ds.id)) {
-        parsed.sections.push({ ...ds })
-      }
-    })
-
-    if (!parsed.referees) {
-      parsed.referees = { mode: 'on-request', list: [] }
-    }
-
-    if (!parsed.profile) {
-      parsed.profile = {
-        type: 'paragraph',
-        content: (parsed as any).summary || '',
-        bullets: [],
-      }
-    }
-
-    if (!parsed.meta.layout) {
-      parsed.meta.layout = { ...defaultLayoutConfig }
-    }
-
-    return parsed
+    return migrateResumeData(JSON.parse(saved))
   } catch {
-    return { ...defaultResumeData }
+    return migrateResumeData(defaultResumeData)
   }
 }
 
@@ -101,6 +72,5 @@ export function saveActivePresetId(id: string | null): void {
 }
 
 function createDefaultPresets(): Preset[] {
-  const { createPreset } = require('./layout-config')
   return THEMES.map((t) => createPreset(t.label, t.id, defaultLayoutConfig))
 }

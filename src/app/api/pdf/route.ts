@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generatePDF } from '@/lib/pdf-generator'
 import { isValidResumeData } from '@/lib/validate'
+import { migrateResumeData } from '@/lib/resume-migration'
 
 export const runtime = 'nodejs'
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid resume data' }, { status: 400 })
     }
 
-    const pdf = await generatePDF(body)
+    const pdf = await generatePDF(migrateResumeData(body))
 
     return new NextResponse(pdf as unknown as BodyInit, {
       status: 200,

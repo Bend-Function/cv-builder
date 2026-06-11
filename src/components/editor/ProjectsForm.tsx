@@ -6,20 +6,13 @@ interface ProjectsFormProps {
 }
 
 export function ProjectsForm({ projects, onChange }: ProjectsFormProps) {
-  const update = (index: number, field: keyof ProjectItem, value: string | string[]) => {
+  const update = (index: number, field: keyof ProjectItem, value: string) => {
     const next = [...projects]
     next[index] = { ...next[index], [field]: value }
     onChange(next)
   }
-  const add = () => onChange([...projects, { id: `proj-${Date.now()}`, name: '', context: '', startDate: '', endDate: '', bullets: [''] }])
+  const add = () => onChange([...projects, { id: `proj-${Date.now()}`, name: '', context: '', location: '', startDate: '', endDate: '', body: '' }])
   const remove = (index: number) => onChange(projects.filter((_, i) => i !== index))
-  const addBullet = (index: number) => update(index, 'bullets', [...projects[index].bullets, ''])
-  const removeBullet = (projIdx: number, bulletIdx: number) => update(projIdx, 'bullets', projects[projIdx].bullets.filter((_, i) => i !== bulletIdx))
-  const setBullet = (projIdx: number, bulletIdx: number, value: string) => {
-    const bullets = [...projects[projIdx].bullets]
-    bullets[bulletIdx] = value
-    update(projIdx, 'bullets', bullets)
-  }
 
   return (
     <div>
@@ -52,21 +45,23 @@ export function ProjectsForm({ projects, onChange }: ProjectsFormProps) {
             </div>
           </div>
           <div className="form-group">
-            <label className="form-label">Description</label>
-            {proj.bullets.map((b, j) => (
-              <div key={j} className="bullet-row">
-                <span className="bullet-dot">›</span>
-                <input
-                  type="text"
-                  value={b}
-                  onChange={(e) => setBullet(i, j, e.target.value)}
-                  className="bullet-input"
-                  aria-label={`Description bullet ${j + 1}`}
-                />
-                <button type="button" onClick={() => removeBullet(i, j)} className="item-delete" aria-label={`Remove description bullet ${j + 1}`}>×</button>
-              </div>
-            ))}
-            <button type="button" onClick={() => addBullet(i)} className="add-btn">+ Add bullet</button>
+            <label htmlFor={`proj-${proj.id}-body`} className="form-label">Description</label>
+            <textarea
+              id={`proj-${proj.id}-body`}
+              value={proj.body}
+              onChange={(e) => update(i, 'body', e.target.value)}
+              rows={8}
+              className="form-textarea markdown-textarea"
+              placeholder={[
+                'Write markdown. Example:',
+                '',
+                'Built a **full-stack** app with Stripe payments.',
+                '',
+                '- Implemented JWT authentication',
+                '  - Added role-based access control',
+                '    - Protected admin dashboard routes',
+              ].join('\n')}
+            />
           </div>
         </div>
       ))}

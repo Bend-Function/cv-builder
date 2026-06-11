@@ -77,24 +77,55 @@
   white-space: nowrap;
 }
 
-.paper-bullets {
+.paper-bullets,
+.paper-markdown ul {
   list-style: none;
   padding: 0;
   margin: 2pt 0 6pt 0;
 }
 
-.paper-bullets li {
+.paper-bullets li,
+.paper-markdown li {
   position: relative;
   padding-left: 10pt;
   margin-bottom: 1.5pt;
   font-size: 9.5pt;
 }
 
-.paper-bullets li::before {
+.paper-bullets li::before,
+.paper-markdown li::before {
   content: '\2022';
   position: absolute;
   left: 0;
   color: #555;
+}
+
+.paper-markdown p {
+  font-size: 9.5pt;
+  margin: 0 0 4pt 0;
+}
+
+.paper-markdown p:last-child,
+.paper-markdown ul:last-child {
+  margin-bottom: 0;
+}
+
+.paper-markdown ul ul {
+  margin: 1pt 0 2pt 0;
+  padding-left: 8pt;
+}
+
+.paper-markdown ul ul li::before {
+  content: '\25E6';
+}
+
+.paper-markdown ul ul ul li::before {
+  content: '\25AA';
+}
+
+.paper-markdown code {
+  font-family: 'Courier New', monospace;
+  font-size: 8.8pt;
 }
 
 .paper-contact-wrapper {

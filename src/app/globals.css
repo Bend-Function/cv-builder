@@ -568,6 +568,11 @@ body {
   min-height: 60px;
 }
 
+.markdown-textarea {
+  min-height: 150px;
+  font-family: var(--font-manrope), sans-serif;
+}
+
 .form-select {
   cursor: pointer;
   appearance: none;

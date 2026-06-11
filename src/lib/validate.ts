@@ -1,6 +1,6 @@
 import { ResumeData } from './resume-data'
-import { defaultLayoutConfig } from './layout-config'
 import { isThemeId } from './themes'
+import { migrateResumeData } from './resume-migration'
 
 export function isValidResumeData(obj: unknown): obj is ResumeData {
   if (!obj || typeof obj !== 'object') return false
@@ -27,10 +27,7 @@ export function importResumeJSON(json: string): ResumeData | null {
   try {
     const parsed = JSON.parse(json)
     if (isValidResumeData(parsed)) {
-      if (!parsed.meta.layout) {
-        parsed.meta.layout = { ...defaultLayoutConfig }
-      }
-      return parsed
+      return migrateResumeData(parsed)
     }
     return null
   } catch {

@@ -82,6 +82,10 @@
   margin-top: 2pt;
 }
 
+.theme-functional .paper-item-content .paper-markdown {
+  margin-top: 2pt;
+}
+
 .theme-functional .paper-footer {
   margin-top: 24pt;
   padding-top: 8pt;

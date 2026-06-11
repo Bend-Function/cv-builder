@@ -6,24 +6,14 @@ interface ExperienceFormProps {
 }
 
 export function ExperienceForm({ experience, onChange }: ExperienceFormProps) {
-  const update = (index: number, field: keyof ExperienceItem, value: string | string[]) => {
+  const update = (index: number, field: keyof ExperienceItem, value: string) => {
     const next = [...experience]
     next[index] = { ...next[index], [field]: value }
     onChange(next)
   }
 
-  const add = () => onChange([...experience, { id: `exp-${Date.now()}`, title: '', company: '', startDate: '', endDate: '', bullets: [''] }])
+  const add = () => onChange([...experience, { id: `exp-${Date.now()}`, title: '', company: '', location: '', startDate: '', endDate: '', body: '' }])
   const remove = (index: number) => onChange(experience.filter((_, i) => i !== index))
-  const addBullet = (index: number) => update(index, 'bullets', [...experience[index].bullets, ''])
-  const removeBullet = (expIdx: number, bulletIdx: number) => {
-    const bullets = experience[expIdx].bullets.filter((_, i) => i !== bulletIdx)
-    update(expIdx, 'bullets', bullets)
-  }
-  const setBullet = (expIdx: number, bulletIdx: number, value: string) => {
-    const bullets = [...experience[expIdx].bullets]
-    bullets[bulletIdx] = value
-    update(expIdx, 'bullets', bullets)
-  }
 
   return (
     <div>
@@ -56,22 +46,23 @@ export function ExperienceForm({ experience, onChange }: ExperienceFormProps) {
             </div>
           </div>
           <div className="form-group">
-            <label className="form-label">Achievements</label>
-            {exp.bullets.map((b, j) => (
-              <div key={j} className="bullet-row">
-                <span className="bullet-dot">›</span>
-                <input
-                  type="text"
-                  value={b}
-                  onChange={(e) => setBullet(i, j, e.target.value)}
-                  placeholder="Action verb + Task + Outcome"
-                  className="bullet-input"
-                  aria-label={`Achievement ${j + 1}`}
-                />
-                <button type="button" onClick={() => removeBullet(i, j)} className="item-delete" aria-label={`Remove achievement ${j + 1}`}>×</button>
-              </div>
-            ))}
-            <button type="button" onClick={() => addBullet(i)} className="add-btn">+ Add bullet</button>
+            <label htmlFor={`exp-${exp.id}-body`} className="form-label">Description & Achievements</label>
+            <textarea
+              id={`exp-${exp.id}-body`}
+              value={exp.body}
+              onChange={(e) => update(i, 'body', e.target.value)}
+              rows={8}
+              className="form-textarea markdown-textarea"
+              placeholder={[
+                'Write markdown. Example:',
+                '',
+                'Built **React** services for customer workflows.',
+                '',
+                '- Improved API response time by 40%',
+                '  - Migrated hot paths to AWS Lambda',
+                '    - Added dashboards for latency tracking',
+              ].join('\n')}
+            />
           </div>
         </div>
       ))}
